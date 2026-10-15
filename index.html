@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shy — 个人主页</title>
+<style>
+  :root{
+    /* 简约配色方案：暖米白底 + 纯白卡片 + 低饱和蓝紫点缀 */
+    --bg:#f5f3ef; --bg-soft:#ece9e2; --card:#ffffff;
+    --text:#26221c; --muted:#7d776b; --line:#e3ded4;
+    --accent:#3b82a0; --accent2:#7c6aa9;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    font-family:"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
+    background:var(--bg); color:var(--text); line-height:1.7;
+  }
+
+  /* ===== 导航 ===== */
+  nav{
+    position:fixed; top:0; left:0; right:0; z-index:10;
+    display:flex; justify-content:space-between; align-items:center;
+    padding:14px 8vw;
+    background:rgba(245,243,239,.85);
+    backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--line);
+  }
+  .logo{font-weight:700; font-size:1.1rem; letter-spacing:1px; color:var(--text)}
+  .logo b{color:var(--accent)}
+  nav ul{display:flex; gap:26px; list-style:none}
+  nav a{color:var(--muted); text-decoration:none; font-size:.92rem; transition:color .2s}
+  nav a:hover{color:var(--accent)}
+  @media(max-width:640px){ nav ul{display:none} }
+
+  /* ===== Hero ===== */
+  header{
+    min-height:92vh; display:flex; flex-direction:column;
+    justify-content:center; align-items:center; text-align:center;
+    padding:110px 6vw 40px;
+    background:linear-gradient(180deg,#e9f0f2 0%, var(--bg) 70%);
+  }
+  .avatar{
+    width:132px; height:132px; border-radius:50%;
+    border:3px solid #fff;
+    box-shadow:0 10px 30px rgba(59,130,160,.22);
+    margin-bottom:26px; overflow:hidden;
+  }
+  .avatar img{width:100%; height:100%; object-fit:cover; display:block}
+  h1{font-size:clamp(2.8rem,8vw,5rem); letter-spacing:3px; line-height:1.15; font-weight:800}
+  h1 span{background:linear-gradient(90deg,var(--accent),var(--accent2));
+    -webkit-background-clip:text; background-clip:text; color:transparent;}
+  .realname{color:var(--muted); margin-top:8px; font-size:1.05rem; letter-spacing:2px}
+  .typing{color:var(--muted); font-size:1.1rem; margin-top:14px; min-height:1.7em}
+  .typing::after{content:"▌"; color:var(--accent); animation:blink 1s infinite}
+  @keyframes blink{50%{opacity:0}}
+  .cta{margin-top:30px; display:flex; gap:14px; flex-wrap:wrap; justify-content:center}
+  .btn{
+    padding:11px 28px; border-radius:999px; text-decoration:none; font-size:.95rem;
+    transition:transform .2s, box-shadow .2s; cursor:pointer; border:none;
+  }
+  .btn-primary{background:linear-gradient(90deg,var(--accent),var(--accent2)); color:#fff; font-weight:600}
+  .btn-primary:hover{transform:translateY(-3px); box-shadow:0 8px 20px rgba(59,130,160,.3)}
+  .btn-ghost{border:1px solid var(--line); color:var(--text); background:var(--card)}
+  .btn-ghost:hover{border-color:var(--accent); color:var(--accent)}
+
+  /* ===== 通用 section ===== */
+  section{max-width:1000px; margin:0 auto; padding:80px 6vw}
+  .sec-title{font-size:1.8rem; margin-bottom:6px}
+  .sec-sub{color:var(--muted); margin-bottom:40px}
+  .sec-title::before{content:"// "; color:var(--accent)}
+
+  /* ===== 卡片 ===== */
+  .about-grid{display:grid; grid-template-columns:1fr 1fr; gap:20px}
+  @media(max-width:760px){.about-grid{grid-template-columns:1fr}}
+  .card{
+    background:var(--card); border:1px solid var(--line);
+    border-radius:16px; padding:24px;
+    transition:transform .25s, box-shadow .25s;
+  }
+  .card:hover{transform:translateY(-4px); box-shadow:0 10px 26px rgba(0,0,0,.06)}
+  .card h3{color:var(--accent); margin-bottom:8px; font-size:1.02rem}
+  .card p{color:var(--muted); font-size:.94rem}
+  .card.wide{grid-column:1/-1}
+  .card code{
+    background:var(--bg-soft); padding:1px 7px; border-radius:6px;
+    font-family:Consolas,monospace; font-size:.88em; color:var(--accent);
+  }
+  .route{display:flex; align-items:center; gap:12px; margin-top:12px; font-weight:600}
+  .route .dot{width:9px;height:9px;border-radius:50%;background:var(--accent)}
+  .route .line{flex:1; height:2px; background:linear-gradient(90deg,var(--accent),var(--accent2))}
+  .route small{color:var(--muted); font-weight:400}
+
+  /* ===== 技能（C 语言代码块风格）===== */
+  .code-window{
+    max-width:680px; border-radius:14px; overflow:hidden;
+    border:1px solid #d9d4c7; box-shadow:0 10px 28px rgba(0,0,0,.07);
+  }
+  .code-bar{
+    background:#e8e4da; padding:9px 14px; display:flex; align-items:center; gap:7px;
+    font-family:Consolas,monospace; font-size:.8rem; color:var(--muted);
+  }
+  .code-bar i{width:11px;height:11px;border-radius:50%;display:inline-block}
+  .code-bar .r{background:#f28b82}.code-bar .y{background:#fbbf24}.code-bar .g{background:#34a853}
+  .code-bar span{margin-left:8px}
+  .code-body{
+    background:#fdfcf9; padding:20px 22px;
+    font-family:Consolas,"Courier New",monospace; font-size:.92rem; line-height:1.9;
+    overflow-x:auto; white-space:pre;
+  }
+  .ck{color:#7c6aa9}      /* 关键字 */
+  .ct{color:#3b82a0}      /* 类型 */
+  .cs{color:#2f7d32}      /* 字符串 */
+  .cc{color:#9a9484}      /* 注释 */
+  .cn{color:#b4560a}      /* 数字 */
+
+  /* ===== 游戏 ===== */
+  .fps-grid{
+    display:grid; grid-template-columns:repeat(2,1fr); gap:16px; margin-bottom:26px;
+  }
+  @media(max-width:560px){.fps-grid{grid-template-columns:1fr}}
+  .fps-card{
+    display:flex; align-items:center; gap:16px;
+    background:var(--card); border:1px solid var(--line); border-radius:16px;
+    padding:18px 20px; transition:transform .25s, box-shadow .25s;
+  }
+  .fps-card:hover{transform:translateY(-4px); box-shadow:0 10px 24px rgba(0,0,0,.08)}
+  .fps-card img{
+    width:64px; height:64px; border-radius:14px; object-fit:contain;
+    background:var(--bg-soft); padding:6px;
+  }
+  /* 官方 logo 是白色文字：反色+色相旋转后变成黑色文字、绿色不变，白底可读 */
+  .fps-card img.invert{filter:invert(1) hue-rotate(180deg)}
+  .fps-card img.cover{padding:0; object-fit:cover}
+  .fps-card h4{font-size:1rem}
+  .fps-card .hours{font-size:.82rem; color:var(--accent); font-weight:600}
+  .game-others{color:var(--muted); font-size:.92rem}
+
+  /* ===== 项目 ===== */
+  .proj-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:20px}
+  .proj{
+    background:var(--card); border:1px solid var(--line); border-radius:16px;
+    padding:24px; transition:transform .25s, box-shadow .25s;
+  }
+  .proj:hover{transform:translateY(-5px); box-shadow:0 12px 28px rgba(0,0,0,.07)}
+  .proj .tag{
+    display:inline-block; font-size:.72rem; padding:3px 12px; border-radius:99px;
+    background:rgba(59,130,160,.1); color:var(--accent); margin:0 6px 10px 0;
+  }
+  .proj h3{margin-bottom:6px; font-size:1.05rem}
+  .proj p{color:var(--muted); font-size:.92rem}
+  .schulte-frame{
+    width:100%; height:600px; border:none; border-radius:12px; margin-top:14px;
+    background:#f5f3ef;
+  }
+
+  /* 猜数字内嵌游戏 */
+  .guess-box{margin-top:16px; background:var(--bg-soft); border-radius:12px; padding:14px}
+  .guess-log{
+    height:150px; overflow-y:auto; font-size:.88rem; color:var(--muted);
+    background:#fff; border:1px solid var(--line); border-radius:8px;
+    padding:10px 12px; margin-bottom:10px;
+    font-family:inherit; /* 与页面其他部分一致的字体 */
+  }
+  .guess-log .ok{color:#16a34a}
+  .guess-log .hint{color:var(--accent)}
+  .guess-input{display:flex; gap:8px}
+  .guess-input input{
+    flex:1; background:#fff; border:1px solid var(--line);
+    border-radius:8px; padding:8px 12px; color:var(--text);
+    font-size:.95rem; outline:none; font-family:inherit;
+  }
+  .guess-input input:focus{border-color:var(--accent)}
+  .guess-input button{
+    background:linear-gradient(90deg,var(--accent),var(--accent2)); border:none;
+    border-radius:8px; padding:8px 18px; font-weight:600; cursor:pointer; color:#fff;
+    font-family:inherit;
+  }
+
+  /* ===== 联系我（统一小胶囊）===== */
+  .contact-list{display:flex; flex-wrap:wrap; gap:12px; justify-content:center}
+  .contact-chip{
+    display:inline-flex; align-items:center; gap:8px;
+    background:var(--card); border:1px solid var(--line);
+    padding:11px 22px; border-radius:99px; text-decoration:none; color:var(--text);
+    transition:border-color .2s, transform .2s, box-shadow .2s;
+    font-size:.92rem; cursor:pointer; font-family:inherit;
+  }
+  .contact-chip:hover{border-color:var(--accent); transform:translateY(-3px); box-shadow:0 6px 16px rgba(0,0,0,.07)}
+
+  footer{
+    text-align:center; color:var(--muted); padding:36px 0; font-size:.85rem;
+    border-top:1px solid var(--line);
+  }
+
+  .reveal{opacity:0; transform:translateY(26px); transition:opacity .7s, transform .7s}
+  .reveal.show{opacity:1; transform:none}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="logo">SHY<b>.DEV</b></div>
+  <ul>
+    <li><a href="#about">关于我</a></li>
+    <li><a href="#skills">技能</a></li>
+    <li><a href="#games">游戏</a></li>
+    <li><a href="#projects">项目</a></li>
+    <li><a href="#contact">联系</a></li>
+  </ul>
+</nav>
+
+<header>
+  <div class="avatar"><img src="avatar.jpg" alt="Shy 的头像"></div>
+  <h1>你好，我是 <span>Shy</span></h1>
+  <p class="realname">孙浩阳 · 沈阳理工大学 计算机科学与技术</p>
+  <p class="typing" id="typing"></p>
+  <div class="cta">
+    <a class="btn btn-primary" href="#projects">项目</a>
+    <a class="btn btn-ghost" href="#contact">联系</a>
+  </div>
+</header>
+
+<section id="about">
+  <h2 class="sec-title">关于我</h2>
+  <p class="sec-sub">About Me</p>
+  <div class="about-grid">
+    <div class="card wide reveal">
+      <h3>🎓 我是谁</h3>
+      <p>Shy（孙浩阳），沈阳理工大学计算机科学与技术大一在读。西安人，跨越 1500 公里来沈阳上学。</p>
+      <div class="route">
+        <span class="dot"></span><span>西安</span>
+        <span class="line"></span>
+        <span>沈阳</span><span class="dot" style="background:var(--accent2)"></span>
+        <small>≈1500 km</small>
+      </div>
+    </div>
+    <div class="card reveal">
+      <h3>🔧 硬件折腾史</h3>
+      <p>中考前一个月，别人刷题，我看装机视频。中考后配件一件件点亮屏幕的那一刻，我掉进了计算机这个坑。</p>
+    </div>
+    <div class="card reveal">
+      <h3>💡 在做什么</h3>
+      <p>课内学 C，课外自学 Python。下一站：Linux 和嵌入式。</p>
+    </div>
+    <div class="card reveal">
+      <h3>🎯 目标</h3>
+      <p>加入计算机协会，一起做项目、打比赛，把「喜欢折腾」变成「能做出东西」。</p>
+    </div>
+  </div>
+</section>
+
+<section id="skills">
+  <h2 class="sec-title">技能</h2>
+  <p class="sec-sub">Skills · skills.c</p>
+  <div class="code-window reveal">
+    <div class="code-bar"><i class="r"></i><i class="y"></i><i class="g"></i><span>skills.c — 我的技能表</span></div>
+    <div class="code-body"><span class="cc">/* 技能熟练度：0-100 */</span>
+<span class="ck">typedef struct</span> {
+    <span class="ct">char</span> name[<span class="cn">20</span>];
+    <span class="ct">int</span>  level;
+} Skill;
+
+Skill skills[] = {
+    {<span class="cs">"C"</span>,      <span class="cn">60</span>},  <span class="cc">// 课内主力</span>
+    {<span class="cs">"Python"</span>, <span class="cn">50</span>},  <span class="cc">// 自学中</span>
+    {<span class="cs">"Linux"</span>,  <span class="cn">10</span>},  <span class="cc">// 想了解，下一步目标</span>
+};</div>
+  </div>
+</section>
+
+<section id="games">
+  <h2 class="sec-title">游戏</h2>
+  <p class="sec-sub">Games · FPS 老玩家</p>
+  <div class="fps-grid">
+    <div class="fps-card reveal">
+      <img src="icons/valorant.svg" alt="无畏契约 VALORANT 官方图标">
+      <div><h4>无畏契约</h4><div class="hours">500 小时+</div></div>
+    </div>
+    <div class="fps-card reveal">
+      <img class="invert" src="icons/cs2_logo.png" alt="CS2 官方图标">
+      <div><h4>CS2</h4><div class="hours">300 小时+</div></div>
+    </div>
+    <div class="fps-card reveal">
+      <img class="invert" src="icons/deltaforce_logo.png" alt="三角洲行动 官方图标">
+      <div><h4>三角洲行动</h4><div class="hours">300 小时+</div></div>
+    </div>
+    <div class="fps-card reveal">
+      <img src="icons/steam.svg" alt="Steam 官方图标">
+      <div><h4>Steam</h4><div class="hours">500 小时+</div></div>
+    </div>
+  </div>
+  <p class="game-others reveal">也玩过：星露谷物语 / 泰拉瑞亚 / 文明 6 / 巫师 3 / 黑神话：悟空 / 生化危机 …</p>
+</section>
+
+<section id="projects">
+  <h2 class="sec-title">项目</h2>
+  <p class="sec-sub">Projects</p>
+  <div class="proj-grid">
+    <div class="proj reveal">
+      <span class="tag">Python</span><span class="tag">小游戏</span>
+      <h3>猜数字</h3>
+      <p>我的第一个 Python 小游戏：猜一个 1-100 的整数，程序提示大了或小了。下面是 JS 复刻版，逻辑一致，直接玩：</p>
+      <div class="guess-box">
+        <div class="guess-log" id="guessLog">
+          <div class="hint">欢迎来到猜数字游戏！</div>
+          <div class="hint">我已经想好了一个 1 到 100 之间的整数，开始猜吧！</div>
+        </div>
+        <div class="guess-input">
+          <input id="guessInput" type="number" min="1" max="100" placeholder="输入你猜的数字（1-100）">
+          <button id="guessBtn">猜！</button>
+        </div>
+      </div>
+    </div>
+    <div class="proj reveal">
+      <span class="tag">HTML/CSS/JS</span><span class="tag">注意力训练</span>
+      <h3>舒尔特方格</h3>
+      <p>按顺序点击 1 到 N² 计时，支持 3×3 到 7×7，自动记录最佳成绩：</p>
+      <iframe class="schulte-frame" src="schulte.html" title="舒尔特方格"></iframe>
+    </div>
+    <div class="proj reveal">
+      <span class="tag">Web</span>
+      <h3>这个主页</h3>
+      <p>HTML/CSS/JS 从零搭建，部署在 GitHub Pages——就是你正在看的这个。</p>
+    </div>
+    <div class="proj reveal">
+      <span class="tag">AI 视频</span><span class="tag">进行中</span>
+      <h3>AI 生成视频</h3>
+      <p>正在用 AI 工具制作，完成后放这里。</p>
+    </div>
+  </div>
+</section>
+
+<section id="contact">
+  <h2 class="sec-title">联系我</h2>
+  <p class="sec-sub">Contact</p>
+  <div class="contact-list reveal">
+    <a class="contact-chip" href="https://space.bilibili.com/492742189" target="_blank">📺 B 站：492742189</a>
+    <a class="contact-chip" href="https://www.douyin.com/search/266483386" target="_blank">🎵 抖音：266483386</a>
+    <a class="contact-chip" href="mailto:917174272@qq.com">📧 917174272@qq.com</a>
+    <button class="contact-chip" onclick="copyText('917174272', this)">🐧 QQ：917174272</button>
+    <button class="contact-chip" onclick="copyText('forevermoreshy', this)">💬 微信：forevermoreshy</button>
+    <a class="contact-chip" href="tel:17391827651">📱 17391827651</a>
+  </div>
+</section>
+
+<footer>© 2026 Shy · SHY.DEV · Deployed on GitHub Pages</footer>
+
+<script>
+  // ===== 打字机（精简文案）=====
+  const lines = ["计科大一 · 沈阳理工","西安 → 沈阳 · 1500km","C / Python / Linux","FPS 老玩家"];
+  const el = document.getElementById("typing");
+  let li=0, ci=0, deleting=false;
+  (function tick(){
+    const line = lines[li];
+    el.textContent = line.slice(0, ci);
+    if(!deleting){
+      ci++;
+      if(ci > line.length){ deleting=true; setTimeout(tick,1600); return; }
+    }else{
+      ci--;
+      if(ci === 0){ deleting=false; li=(li+1)%lines.length; }
+    }
+    setTimeout(tick, deleting?40:90);
+  })();
+
+  // ===== 滚动浮现 =====
+  const io = new IntersectionObserver(es=>{
+    es.forEach(e=>{ if(e.isIntersecting) e.target.classList.add("show"); });
+  },{threshold:.15});
+  document.querySelectorAll(".reveal").forEach(el=>io.observe(el));
+
+  // ===== 猜数字（JS 复刻版，逻辑与 guess_number.py 一致）=====
+  let answer = Math.floor(Math.random()*100)+1;
+  let guessCount = 0;
+  const log = document.getElementById("guessLog");
+  const input = document.getElementById("guessInput");
+  function addLog(text, cls){
+    const d = document.createElement("div");
+    if(cls) d.className = cls;
+    d.textContent = text;
+    log.appendChild(d);
+    log.scrollTop = log.scrollHeight;
+  }
+  function guess(){
+    const raw = input.value.trim();
+    input.value = "";
+    const g = parseInt(raw, 10);
+    if(isNaN(g)){ addLog("输入无效：请输入一个整数哦，本次不计入猜测次数。"); return; }
+    if(g < 1 || g > 100){ addLog("超出范围：数字需要在 1 到 100 之间，本次不计入猜测次数。"); return; }
+    guessCount++;
+    if(g > answer) addLog("大了，再往小猜一猜！", "hint");
+    else if(g < answer) addLog("小了，再往大猜一猜！", "hint");
+    else{
+      addLog("恭喜你，猜对了！答案就是 " + answer + "。", "ok");
+      addLog("本局你一共猜了 " + guessCount + " 次。已自动开启新一局～", "ok");
+      answer = Math.floor(Math.random()*100)+1;
+      guessCount = 0;
+    }
+  }
+  document.getElementById("guessBtn").onclick = guess;
+  input.addEventListener("keydown", e=>{ if(e.key === "Enter") guess(); });
+
+  // ===== 复制 =====
+  function copyText(text, btn){
+    navigator.clipboard.writeText(text).then(()=>{
+      const old = btn.textContent;
+      btn.textContent = "已复制 ✓";
+      setTimeout(()=>btn.textContent = old, 1500);
+    });
+  }
+</script>
+
+</body>
+</html>

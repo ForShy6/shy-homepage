@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>舒尔特方格</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#f5f3ef;color:#26221c;font-family:'Segoe UI',system-ui,sans-serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:16px;user-select:none}
+h1{font-size:1.4rem;margin-bottom:12px;letter-spacing:2px;color:#3b82a0}
+.info{display:flex;gap:16px;flex-wrap:wrap;justify-content:center;margin-bottom:12px;font-size:.9rem}
+.info span{background:#fff;border:1px solid #e3ded4;padding:6px 14px;border-radius:8px}
+.info b{color:#e94560}
+.controls{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;justify-content:center}
+button,select{background:#fff;color:#26221c;border:1px solid #e3ded4;padding:8px 16px;border-radius:8px;cursor:pointer;font-size:.9rem;transition:.2s}
+button:hover,select:hover{background:#3b82a0;color:#fff;border-color:#3b82a0}
+#grid{display:grid;gap:6px;width:min(90vw,480px);aspect-ratio:1}
+.cell{background:#fff;border:1px solid #e3ded4;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:clamp(1rem,4vw,2rem);font-weight:700;cursor:pointer;transition:.15s}
+.cell:hover{background:#e9f0f2;border-color:#3b82a0}
+.cell.done{background:#3b82a0;color:#fff;pointer-events:none}
+.cell.err{animation:shake .3s;background:#e94560!important;color:#fff}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
+#result{margin-top:16px;font-size:1.1rem;min-height:1.5em;text-align:center}
+#result b{color:#3b82a0;font-size:1.3rem}
+</style>
+</head>
+<body>
+<h1>舒尔特方格</h1>
+<div class="info">
+<span>用时：<b id="time">0.00</b>s</span>
+<span>最佳：<b id="best">--</b>s</span>
+<span>下一个：<b id="next">1</b></span>
+</div>
+<div class="controls">
+<select id="size">
+<option value="3">3×3</option>
+<option value="4">4×4</option>
+<option value="5" selected>5×5</option>
+<option value="6">6×6</option>
+<option value="7">7×7</option>
+</select>
+<button id="restart">重新开始</button>
+</div>
+<div id="grid"></div>
+<div id="result"></div>
+<script>
+const $=id=>document.getElementById(id);
+let n=5,cur=1,start=0,timer=null,best={};
+const grid=$('grid'),timeEl=$('time'),bestEl=$('best'),nextEl=$('next'),result=$('result');
+
+const load=()=>{try{best=JSON.parse(localStorage.getItem('schulte')||'{}')}catch(e){best={}}};
+const save=()=>localStorage.setItem('schulte',JSON.stringify(best));
+const shuffle=a=>{for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a};
+
+const init=()=>{
+  clearInterval(timer);timer=null;cur=1;start=0;
+  timeEl.textContent='0.00';nextEl.textContent='1';result.textContent='';
+  bestEl.textContent=best[n]?best[n].toFixed(2):'--';
+  grid.style.gridTemplateColumns=`repeat(${n},1fr)`;
+  const nums=shuffle([...Array(n*n)].map((_,i)=>i+1));
+  grid.innerHTML=nums.map(v=>`<div class="cell" data-v="${v}">${v}</div>`).join('');
+};
+
+const tick=()=>{timeEl.textContent=((Date.now()-start)/1000).toFixed(2)};
+
+grid.addEventListener('click',e=>{
+  const c=e.target.closest('.cell');if(!c||c.classList.contains('done'))return;
+  const v=+c.dataset.v;
+  if(v===cur){
+    if(cur===1){start=Date.now();timer=setInterval(tick,10)}
+    c.classList.add('done');cur++;
+    if(cur>n*n){
+      clearInterval(timer);
+      const t=(Date.now()-start)/1000;
+      timeEl.textContent=t.toFixed(2);
+      const nr=!best[n]||t<best[n];
+      if(nr){best[n]=t;save();bestEl.textContent=t.toFixed(2)}
+      result.innerHTML=`完成！用时 <b>${t.toFixed(2)}</b>s${nr?' 🏆新纪录！':''}`;
+    }else nextEl.textContent=cur;
+  }else{
+    c.classList.add('err');setTimeout(()=>c.classList.remove('err'),300);
+  }
+});
+
+$('restart').onclick=init;
+$('size').onchange=e=>{n=+e.target.value;init()};
+document.addEventListener('keydown',e=>{if(e.code==='Space'){e.preventDefault();init()}});
+
+load();init();
+</script>
+</body>
+</html>
