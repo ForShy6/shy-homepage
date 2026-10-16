@@ -17,6 +17,20 @@
     font-family:"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
     background:var(--bg); color:var(--text); line-height:1.7;
   }
+  /* 背景插画：用 img + object-fit:contain，任何屏幕都等比例，绝不拉伸变形 */
+  .bg-art{
+    position:fixed; inset:0; z-index:-1;
+    display:flex; justify-content:flex-end; align-items:center;
+    padding-right:5vw; pointer-events:none;
+  }
+  .bg-art img{
+    height:85vh; width:auto; object-fit:contain; opacity:.28;
+  }
+  /* 手机端：竖屏时图片移到正下方居中，缩小变淡 */
+  @media(max-width:760px){
+    .bg-art{justify-content:center; align-items:flex-end; padding:0 0 4vh}
+    .bg-art img{height:52vh; opacity:.2}
+  }
 
   /* ===== 导航 ===== */
   nav{
@@ -36,10 +50,9 @@
 
   /* ===== Hero ===== */
   header{
-    min-height:92vh; display:flex; flex-direction:column;
+    min-height:88vh; display:flex; flex-direction:column;
     justify-content:center; align-items:center; text-align:center;
     padding:110px 6vw 40px;
-    background:linear-gradient(180deg,#e9f0f2 0%, var(--bg) 70%);
   }
   .avatar{
     width:132px; height:132px; border-radius:50%;
@@ -130,8 +143,6 @@
     width:64px; height:64px; border-radius:14px; object-fit:contain;
     background:var(--bg-soft); padding:6px;
   }
-  /* 官方 logo 是白色文字：反色+色相旋转后变成黑色文字、绿色不变，白底可读 */
-  .fps-card img.invert{filter:invert(1) hue-rotate(180deg)}
   .fps-card img.cover{padding:0; object-fit:cover}
   .fps-card h4{font-size:1rem}
   .fps-card .hours{font-size:.82rem; color:var(--accent); font-weight:600}
@@ -178,16 +189,21 @@
     font-family:inherit;
   }
 
-  /* ===== 联系我（统一小胶囊）===== */
-  .contact-list{display:flex; flex-wrap:wrap; gap:12px; justify-content:center}
+  /* ===== 联系我（3 列网格卡片，真实官方图标）===== */
+  .contact-list{
+    display:grid; grid-template-columns:repeat(3,1fr); gap:16px;
+  }
+  @media(max-width:720px){.contact-list{grid-template-columns:repeat(2,1fr)}}
+  @media(max-width:460px){.contact-list{grid-template-columns:1fr}}
   .contact-chip{
-    display:inline-flex; align-items:center; gap:8px;
+    display:flex; align-items:center; gap:12px; justify-content:center;
     background:var(--card); border:1px solid var(--line);
-    padding:11px 22px; border-radius:99px; text-decoration:none; color:var(--text);
+    padding:16px 14px; border-radius:14px; text-decoration:none; color:var(--text);
     transition:border-color .2s, transform .2s, box-shadow .2s;
     font-size:.92rem; cursor:pointer; font-family:inherit;
   }
-  .contact-chip:hover{border-color:var(--accent); transform:translateY(-3px); box-shadow:0 6px 16px rgba(0,0,0,.07)}
+  .contact-chip:hover{border-color:var(--accent); transform:translateY(-3px); box-shadow:0 8px 18px rgba(0,0,0,.07)}
+  .contact-chip img, .contact-chip svg{width:22px; height:22px; flex:none}
 
   footer{
     text-align:center; color:var(--muted); padding:36px 0; font-size:.85rem;
@@ -199,6 +215,8 @@
 </style>
 </head>
 <body>
+
+<div class="bg-art"><img src="bg.jpg" alt=""></div>
 
 <nav>
   <div class="logo">SHY<b>.DEV</b></div>
@@ -228,7 +246,7 @@
   <div class="about-grid">
     <div class="card wide reveal">
       <h3>🎓 我是谁</h3>
-      <p>Shy（孙浩阳），沈阳理工大学计算机科学与技术大一在读。西安人，跨越 1500 公里来沈阳上学。</p>
+      <p>Shy（孙浩阳），沈阳理工大学计算机科学与技术大一在读。来自陕西西安，跨越 1500 公里来沈阳上学。</p>
       <div class="route">
         <span class="dot"></span><span>西安</span>
         <span class="line"></span>
@@ -272,19 +290,19 @@ Skill skills[] = {
 
 <section id="games">
   <h2 class="sec-title">游戏</h2>
-  <p class="sec-sub">Games · FPS 老玩家</p>
+  <p class="sec-sub">Games · 又菜又爱玩</p>
   <div class="fps-grid">
     <div class="fps-card reveal">
       <img src="icons/valorant.svg" alt="无畏契约 VALORANT 官方图标">
-      <div><h4>无畏契约</h4><div class="hours">500 小时+</div></div>
+      <div><h4>无畏契约</h4><div class="hours">黄金 · 500 小时+</div></div>
     </div>
     <div class="fps-card reveal">
-      <img class="invert" src="icons/cs2_logo.png" alt="CS2 官方图标">
-      <div><h4>CS2</h4><div class="hours">300 小时+</div></div>
+      <img class="cover" src="icons/cs2.png" alt="CS2 官方图标">
+      <div><h4>CS2</h4><div class="hours">C+ · 300 小时+</div></div>
     </div>
     <div class="fps-card reveal">
-      <img class="invert" src="icons/deltaforce_logo.png" alt="三角洲行动 官方图标">
-      <div><h4>三角洲行动</h4><div class="hours">300 小时+</div></div>
+      <img class="cover" src="icons/deltaforce.png" alt="三角洲行动 官方图标">
+      <div><h4>三角洲行动</h4><div class="hours">绝密 KD 1.2 · 300 小时+</div></div>
     </div>
     <div class="fps-card reveal">
       <img src="icons/steam.svg" alt="Steam 官方图标">
@@ -336,12 +354,20 @@ Skill skills[] = {
   <h2 class="sec-title">联系我</h2>
   <p class="sec-sub">Contact</p>
   <div class="contact-list reveal">
-    <a class="contact-chip" href="https://space.bilibili.com/492742189" target="_blank">📺 B 站：492742189</a>
-    <a class="contact-chip" href="https://www.douyin.com/search/266483386" target="_blank">🎵 抖音：266483386</a>
-    <a class="contact-chip" href="mailto:917174272@qq.com">📧 917174272@qq.com</a>
-    <button class="contact-chip" onclick="copyText('917174272', this)">🐧 QQ：917174272</button>
-    <button class="contact-chip" onclick="copyText('forevermoreshy', this)">💬 微信：forevermoreshy</button>
-    <a class="contact-chip" href="tel:17391827651">📱 17391827651</a>
+    <a class="contact-chip" href="https://space.bilibili.com/492742189" target="_blank">
+      <img src="icons/bilibili.svg" alt="B站图标">B 站：492742189</a>
+    <a class="contact-chip" href="https://www.douyin.com/search/266483386" target="_blank">
+      <img src="icons/douyin.svg" alt="抖音图标">抖音：266483386</a>
+    <button class="contact-chip" onclick="copyText('917174272', this)">
+      <img src="icons/qq.svg" alt="QQ图标">QQ：917174272</button>
+    <button class="contact-chip" onclick="copyText('forevermoreshy', this)">
+      <img src="icons/wechat.svg" alt="微信图标">微信：forevermoreshy</button>
+    <a class="contact-chip" href="mailto:917174272@qq.com">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#EA4335" stroke-width="1.8"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg>
+      917174272@qq.com</a>
+    <a class="contact-chip" href="tel:17391827651">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#26221c" stroke-width="1.8"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/></svg>
+      17391827651</a>
   </div>
 </section>
 
