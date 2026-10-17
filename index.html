@@ -189,13 +189,6 @@
   }
   /* 让卡片内嵌内容自动撑满，保证同一行卡片等高 */
   .proj .guess-box, .proj .schulte-frame, .proj .proj-video{margin-top:auto}
-  .proj-link{
-    display:inline-flex; align-items:center; gap:6px; margin-top:10px;
-    color:var(--accent); font-size:.88rem; text-decoration:none;
-  }
-  .proj-link:hover{text-decoration:underline}
-  .proj-meta{color:var(--muted); font-size:.88rem; margin-top:8px}
-  .proj-meta b{color:var(--text); font-weight:600}
   .proj:hover{transform:translateY(-5px); box-shadow:0 12px 28px rgba(0,0,0,.07)}
   .proj .tag{
     display:inline-block; font-size:.72rem; padding:3px 12px; border-radius:99px;
@@ -403,8 +396,6 @@ Skill skills[] = {
       <span class="tag">Python</span><span class="tag">小游戏</span>
       <h3>猜数字</h3>
       <p>我的第一个 Python 小游戏：猜一个 1-100 的整数，程序提示大了或小了。</p>
-      <p class="proj-meta">技术栈 <b>C 语言思路 / Python / JS</b>　我做的 <b>全部逻辑与输入输出</b>　难点 <b>输入合法性校验</b></p>
-      <a class="proj-link" href="https://github.com/ForShy6/shy-homepage/blob/main/src/guess_number.py" target="_blank">查看 Python 源码 →</a>
       <div class="guess-box">
         <div class="guess-log" id="guessLog">
           <div class="hint">欢迎来到猜数字游戏！</div>
@@ -420,23 +411,17 @@ Skill skills[] = {
       <span class="tag">HTML/CSS/JS</span><span class="tag">注意力训练</span>
       <h3>舒尔特方格</h3>
       <p>注意力训练小工具：按顺序点 1 到 N² 计时，支持 3×3 到 7×7，用 localStorage 记录最佳成绩。</p>
-      <p class="proj-meta">技术栈 <b>HTML / CSS / 原生 JS</b>　我做的 <b>全部代码</b>　难点 <b>洗牌算法 + 计时器</b></p>
-      <a class="proj-link" href="https://github.com/ForShy6/shy-homepage/blob/main/schulte.html" target="_blank">查看源码 →</a>
-      <a class="proj-link" href="schulte.html" target="_blank">全屏打开 →</a>
       <iframe class="schulte-frame" src="schulte.html" title="舒尔特方格"></iframe>
     </div>
     <div class="proj reveal">
       <span class="tag">Web</span>
       <h3>这个主页</h3>
       <p>HTML/CSS/JS 从零搭建，部署在 GitHub Pages——就是你正在看的这个。猜数字与舒尔特方格都直接嵌在页面里可玩。</p>
-      <p class="proj-meta">技术栈 <b>HTML / CSS / 原生 JS</b>　我做的 <b>全部页面与交互</b>　部署 <b>GitHub Pages</b></p>
-      <a class="proj-link" href="https://github.com/ForShy6/shy-homepage" target="_blank">查看源码仓库 →</a>
     </div>
     <div class="proj reveal">
       <span class="tag">AI 视频</span><span class="tag">科普</span>
       <h3>为什么年纪越大时间过得越快</h3>
       <p>用 AI 生成的科普短片，从记忆与「第一次」的密度解释时间感的变化。</p>
-      <p class="proj-meta">工具 <b>AI 生成 + 剪辑</b>　我做的 <b>选题、文案与成片</b>　时长 <b>约 4 分钟</b></p>
       <video class="proj-video" src="video/ai-video.mp4" controls preload="metadata" playsinline></video>
     </div>
   </div>
