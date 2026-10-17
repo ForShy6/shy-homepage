@@ -24,7 +24,7 @@
     padding-right:4vw; pointer-events:none;
   }
   .bg-art img{
-    height:96vh; width:auto;
+    height:125vh; width:auto;   /* 超出屏幕高度，人物被放大且底部自然出画 */
     /* 正片叠底：残留的浅色纸底直接溶进米色背景，看不出矩形边 */
     mix-blend-mode:multiply;
     opacity:.62;
@@ -35,8 +35,8 @@
   }
   /* 手机端：竖屏时居中置底、缩小变淡 */
   @media(max-width:760px){
-    .bg-art{justify-content:center; align-items:flex-end; padding:0 0 2vh}
-    .bg-art img{height:64vh; opacity:.5}
+    .bg-art{justify-content:center; align-items:flex-end; padding:0 0 0}
+    .bg-art img{height:84vh; opacity:.5}
   }
 
   /* ===== 导航 ===== */
