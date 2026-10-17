@@ -229,6 +229,38 @@
     font-family:inherit;
   }
 
+  /* ===== 放大弹窗（解决手机端舒尔特方格滑动冲突）===== */
+  .proj-head{display:flex; align-items:baseline; justify-content:space-between; gap:10px; flex-wrap:wrap}
+  .zoom-btn{
+    background:none; border:1px solid var(--line); color:var(--accent);
+    font-size:.85rem; padding:5px 14px; border-radius:99px; cursor:pointer;
+    display:inline-flex; align-items:center; gap:5px; transition:.2s; font-family:inherit;
+  }
+  .zoom-btn:hover{border-color:var(--accent); background:rgba(59,130,160,.08)}
+  .modal{
+    position:fixed; inset:0; z-index:60; display:none;
+    align-items:center; justify-content:center; padding:16px;
+    background:rgba(30,26,20,.6); backdrop-filter:blur(4px);
+  }
+  .modal.show{display:flex}
+  .modal-box{
+    background:#fff; border-radius:18px; width:min(94vw,560px);
+    max-height:92vh; overflow:hidden; position:relative;
+    box-shadow:0 20px 60px rgba(0,0,0,.3);
+  }
+  .modal-box .modal-bar{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:12px 16px; border-bottom:1px solid var(--line);
+  }
+  .modal-box .modal-bar b{font-size:.95rem}
+  .modal-close{
+    background:none; border:none; font-size:1.3rem; cursor:pointer;
+    color:var(--muted); line-height:1; padding:2px 6px;
+  }
+  .modal-close:hover{color:var(--text)}
+  .modal-box iframe{width:100%; height:min(72vh,560px); border:none; display:block}
+  body.modal-open{overflow:hidden}
+
   /* ===== 联系我（3 列网格卡片，真实官方图标）===== */
   .contact-list{
     display:grid; grid-template-columns:repeat(3,1fr); gap:16px;
@@ -432,7 +464,10 @@ Skill skills[] = {
     </div>
     <div class="proj reveal">
       <span class="tag">HTML/CSS/JS</span><span class="tag">注意力训练</span>
-      <h3>舒尔特方格</h3>
+      <div class="proj-head">
+        <h3>舒尔特方格</h3>
+        <button class="zoom-btn" onclick="openSchulte()">⤢ 放大</button>
+      </div>
       <p>注意力训练小工具：按顺序点 1 到 N² 计时，支持 3×3 到 7×7，用 localStorage 记录最佳成绩。</p>
       <iframe class="schulte-frame" src="schulte.html" title="舒尔特方格"></iframe>
     </div>
@@ -479,6 +514,16 @@ Skill skills[] = {
       17391827651</a>
   </div>
 </section>
+
+<div class="modal" id="schulteModal">
+  <div class="modal-box">
+    <div class="modal-bar">
+      <b>舒尔特方格</b>
+      <button class="modal-close" onclick="closeSchulte()" aria-label="关闭">✕</button>
+    </div>
+    <iframe src="schulte.html" title="舒尔特方格"></iframe>
+  </div>
+</div>
 
 <footer>
   © 2026 Shy · 孙浩阳　|　最后更新：2026.10.17　|　技术栈：HTML / CSS / 原生 JS　|　
@@ -539,6 +584,19 @@ Skill skills[] = {
   }
   document.getElementById("guessBtn").onclick = guess;
   input.addEventListener("keydown", e=>{ if(e.key === "Enter") guess(); });
+
+  // ===== 舒尔特方格放大弹窗 =====
+  const schulteModal = document.getElementById("schulteModal");
+  function openSchulte(){
+    schulteModal.classList.add("show");
+    document.body.classList.add("modal-open");
+  }
+  function closeSchulte(){
+    schulteModal.classList.remove("show");
+    document.body.classList.remove("modal-open");
+  }
+  schulteModal.addEventListener("click", e=>{ if(e.target === schulteModal) closeSchulte(); });
+  document.addEventListener("keydown", e=>{ if(e.key === "Escape") closeSchulte(); });
 
   // ===== 背景音乐：点封面旋转播放，再点暂停 =====
   const bgm = document.getElementById("bgm");
