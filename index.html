@@ -4,6 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Shy — 个人主页</title>
+<meta name="description" content="Shy（孙浩阳）的个人主页：沈阳理工大学计算机科学与技术大一在读，分享我的小项目、游戏日常与联系方式。">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%233b82a0'/%3E%3Ctext x='16' y='22' font-size='16' font-family='Segoe UI' font-weight='700' fill='%23fff' text-anchor='middle'%3ES%3C/text%3E%3C/svg%3E">
 <style>
   :root{
     /* 简约配色方案：暖米白底 + 纯白卡片 + 低饱和蓝紫点缀 */
@@ -17,6 +19,27 @@
     font-family:"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
     background:var(--bg); color:var(--text); line-height:1.7;
   }
+  /* ===== 背景场景：全屏铺满 + 渐变融入底色，电脑/手机都不留色差 ===== */
+  .bg-scene{position:fixed; inset:0; z-index:-2; overflow:hidden}
+  .bg-scene img{
+    width:100%; height:100%; object-fit:cover; object-position:50% 32%;
+  }
+  /* 上层米色渐层：图片颜色与页面底色无缝衔接，同时保证文字可读 */
+  .bg-tint{
+    position:absolute; inset:0;
+    background:
+      linear-gradient(180deg, rgba(245,243,239,.45) 0%, rgba(245,243,239,.72) 38%, rgba(245,243,239,.93) 100%),
+      linear-gradient(90deg, rgba(245,243,239,.7) 0%, rgba(245,243,239,.25) 55%, rgba(245,243,239,.55) 100%);
+  }
+  @media(max-width:760px){
+    .bg-scene img{object-position:50% 25%}
+    .bg-tint{
+      background:
+        linear-gradient(180deg, rgba(245,243,239,.55) 0%, rgba(245,243,239,.78) 40%, rgba(245,243,239,.94) 100%),
+        linear-gradient(90deg, rgba(245,243,239,.6) 0%, rgba(245,243,239,.35) 50%, rgba(245,243,239,.6) 100%);
+    }
+  }
+
   /* ===== 导航 ===== */
   nav{
     position:fixed; top:0; left:0; right:0; z-index:10;
@@ -31,7 +54,14 @@
   nav ul{display:flex; gap:26px; list-style:none}
   nav a{color:var(--muted); text-decoration:none; font-size:.92rem; transition:color .2s}
   nav a:hover{color:var(--accent)}
-  @media(max-width:640px){ nav ul{display:none} }
+  /* 手机端：不再隐藏菜单，改成可横向滚动的紧凑导航 */
+  @media(max-width:640px){
+    nav{padding:10px 5vw; gap:12px}
+    .logo{font-size:1rem}
+    nav ul{gap:16px; overflow-x:auto; -webkit-overflow-scrolling:touch; max-width:62vw}
+    nav ul::-webkit-scrollbar{display:none}
+    nav a{font-size:.85rem; white-space:nowrap}
+  }
 
   /* ===== Hero ===== */
   header{
@@ -133,12 +163,39 @@
   .fps-card .hours{font-size:.82rem; color:var(--accent); font-weight:600}
   .game-others{color:var(--muted); font-size:.92rem}
 
+  /* ===== 经历时间线 ===== */
+  .timeline{position:relative; padding-left:26px; max-width:720px}
+  .timeline::before{
+    content:""; position:absolute; left:7px; top:6px; bottom:6px; width:2px;
+    background:linear-gradient(180deg, var(--accent), var(--accent2));
+  }
+  .tl-item{position:relative; margin-bottom:22px}
+  .tl-item:last-child{margin-bottom:0}
+  .tl-item::before{
+    content:""; position:absolute; left:-24px; top:8px;
+    width:12px; height:12px; border-radius:50%;
+    background:#fff; border:3px solid var(--accent);
+  }
+  .tl-date{font-size:.82rem; color:var(--accent); font-weight:600; letter-spacing:.5px}
+  .tl-title{font-size:1rem; font-weight:600; margin:2px 0 2px}
+  .tl-desc{color:var(--muted); font-size:.92rem}
+
   /* ===== 项目 ===== */
-  .proj-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:20px}
+  .proj-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:20px; align-items:stretch}
   .proj{
     background:var(--card); border:1px solid var(--line); border-radius:16px;
     padding:24px; transition:transform .25s, box-shadow .25s;
+    display:flex; flex-direction:column;
   }
+  /* 让卡片内嵌内容自动撑满，保证同一行卡片等高 */
+  .proj .guess-box, .proj .schulte-frame, .proj .proj-video{margin-top:auto}
+  .proj-link{
+    display:inline-flex; align-items:center; gap:6px; margin-top:10px;
+    color:var(--accent); font-size:.88rem; text-decoration:none;
+  }
+  .proj-link:hover{text-decoration:underline}
+  .proj-meta{color:var(--muted); font-size:.88rem; margin-top:8px}
+  .proj-meta b{color:var(--text); font-weight:600}
   .proj:hover{transform:translateY(-5px); box-shadow:0 12px 28px rgba(0,0,0,.07)}
   .proj .tag{
     display:inline-block; font-size:.72rem; padding:3px 12px; border-radius:99px;
@@ -147,9 +204,10 @@
   .proj h3{margin-bottom:6px; font-size:1.05rem}
   .proj p{color:var(--muted); font-size:.92rem}
   .schulte-frame{
-    width:100%; height:600px; border:none; border-radius:12px; margin-top:14px;
+    width:100%; height:430px; border:none; border-radius:12px; margin-top:14px;
     background:#f5f3ef;
   }
+  @media(max-width:760px){ .schulte-frame{height:360px} }
   .proj-video{
     width:100%; margin-top:14px; border-radius:12px; display:block;
     background:#000;
@@ -182,6 +240,8 @@
   .contact-list{
     display:grid; grid-template-columns:repeat(3,1fr); gap:16px;
   }
+  /* 联系我那组是 4 项，用 2×2 更整齐 */
+  #contact .contact-list{grid-template-columns:repeat(2,1fr)}
   @media(max-width:720px){.contact-list{grid-template-columns:repeat(2,1fr)}}
   @media(max-width:460px){.contact-list{grid-template-columns:1fr}}
   .contact-chip{
@@ -201,17 +261,26 @@
 
   .reveal{opacity:0; transform:translateY(26px); transition:opacity .7s, transform .7s}
   .reveal.show{opacity:1; transform:none}
+  /* 系统开启"减少动效"时关闭入场动画，照顾对动画敏感的访问者 */
+  @media(prefers-reduced-motion:reduce){
+    .reveal{opacity:1; transform:none; transition:none}
+    html{scroll-behavior:auto}
+  }
 </style>
 </head>
 <body>
+
+<div class="bg-scene"><img src="bg-crop.jpg" alt=""><div class="bg-tint"></div></div>
 
 <nav>
   <div class="logo">SHY<b>.DEV</b></div>
   <ul>
     <li><a href="#about">关于我</a></li>
     <li><a href="#skills">技能</a></li>
+    <li><a href="#timeline-sec">经历</a></li>
     <li><a href="#games">游戏</a></li>
     <li><a href="#projects">项目</a></li>
+    <li><a href="#links">外链</a></li>
     <li><a href="#contact">联系</a></li>
   </ul>
 </nav>
@@ -275,6 +344,33 @@ Skill skills[] = {
   </div>
 </section>
 
+<section id="timeline-sec">
+  <h2 class="sec-title">经历</h2>
+  <p class="sec-sub">Timeline</p>
+  <div class="timeline">
+    <div class="tl-item reveal">
+      <div class="tl-date">2023.07</div>
+      <div class="tl-title">亲手装了第一台电脑</div>
+      <p class="tl-desc">中考结束，自己挑配件、装机、点亮屏幕。从那天起掉进了计算机的坑。</p>
+    </div>
+    <div class="tl-item reveal">
+      <div class="tl-date">2026.07</div>
+      <div class="tl-title">考入沈阳理工大学 · 计算机科学与技术</div>
+      <p class="tl-desc">从陕西西安到沈阳，跨越 1500 公里，正式开始系统学计算机。</p>
+    </div>
+    <div class="tl-item reveal">
+      <div class="tl-date">2026.10</div>
+      <div class="tl-title">做出第一批小项目</div>
+      <p class="tl-desc">猜数字（Python）、舒尔特方格（HTML/CSS/JS）、AI 科普视频，从写到能跑、再到能给别人玩。</p>
+    </div>
+    <div class="tl-item reveal">
+      <div class="tl-date">2026.10</div>
+      <div class="tl-title">搭起这个个人主页</div>
+      <p class="tl-desc">从零写 HTML/CSS/JS，部署到 GitHub Pages，正式成为我在互联网上的第一个据点。</p>
+    </div>
+  </div>
+</section>
+
 <section id="games">
   <h2 class="sec-title">游戏</h2>
   <p class="sec-sub">Games · 又菜又爱玩</p>
@@ -306,7 +402,9 @@ Skill skills[] = {
     <div class="proj reveal">
       <span class="tag">Python</span><span class="tag">小游戏</span>
       <h3>猜数字</h3>
-      <p>我的第一个 Python 小游戏：猜一个 1-100 的整数，程序提示大了或小了。下面是 JS 复刻版，逻辑一致，直接玩：</p>
+      <p>我的第一个 Python 小游戏：猜一个 1-100 的整数，程序提示大了或小了。</p>
+      <p class="proj-meta">技术栈 <b>C 语言思路 / Python / JS</b>　我做的 <b>全部逻辑与输入输出</b>　难点 <b>输入合法性校验</b></p>
+      <a class="proj-link" href="https://github.com/ForShy6/shy-homepage/blob/main/src/guess_number.py" target="_blank">查看 Python 源码 →</a>
       <div class="guess-box">
         <div class="guess-log" id="guessLog">
           <div class="hint">欢迎来到猜数字游戏！</div>
@@ -321,20 +419,39 @@ Skill skills[] = {
     <div class="proj reveal">
       <span class="tag">HTML/CSS/JS</span><span class="tag">注意力训练</span>
       <h3>舒尔特方格</h3>
-      <p>按顺序点击 1 到 N² 计时，支持 3×3 到 7×7，自动记录最佳成绩：</p>
+      <p>注意力训练小工具：按顺序点 1 到 N² 计时，支持 3×3 到 7×7，用 localStorage 记录最佳成绩。</p>
+      <p class="proj-meta">技术栈 <b>HTML / CSS / 原生 JS</b>　我做的 <b>全部代码</b>　难点 <b>洗牌算法 + 计时器</b></p>
+      <a class="proj-link" href="https://github.com/ForShy6/shy-homepage/blob/main/schulte.html" target="_blank">查看源码 →</a>
+      <a class="proj-link" href="schulte.html" target="_blank">全屏打开 →</a>
       <iframe class="schulte-frame" src="schulte.html" title="舒尔特方格"></iframe>
     </div>
     <div class="proj reveal">
       <span class="tag">Web</span>
       <h3>这个主页</h3>
-      <p>HTML/CSS/JS 从零搭建，部署在 GitHub Pages——就是你正在看的这个。</p>
+      <p>HTML/CSS/JS 从零搭建，部署在 GitHub Pages——就是你正在看的这个。猜数字与舒尔特方格都直接嵌在页面里可玩。</p>
+      <p class="proj-meta">技术栈 <b>HTML / CSS / 原生 JS</b>　我做的 <b>全部页面与交互</b>　部署 <b>GitHub Pages</b></p>
+      <a class="proj-link" href="https://github.com/ForShy6/shy-homepage" target="_blank">查看源码仓库 →</a>
     </div>
     <div class="proj reveal">
       <span class="tag">AI 视频</span><span class="tag">科普</span>
       <h3>为什么年纪越大时间过得越快</h3>
       <p>用 AI 生成的科普短片，从记忆与「第一次」的密度解释时间感的变化。</p>
+      <p class="proj-meta">工具 <b>AI 生成 + 剪辑</b>　我做的 <b>选题、文案与成片</b>　时长 <b>约 4 分钟</b></p>
       <video class="proj-video" src="video/ai-video.mp4" controls preload="metadata" playsinline></video>
     </div>
+  </div>
+</section>
+
+<section id="links">
+  <h2 class="sec-title">我的其他站点</h2>
+  <p class="sec-sub">Links</p>
+  <div class="contact-list reveal">
+    <a class="contact-chip" href="https://github.com/ForShy6" target="_blank">
+      <img src="icons/github.svg" alt="GitHub 图标">GitHub：ForShy6</a>
+    <a class="contact-chip" href="https://space.bilibili.com/492742189" target="_blank">
+      <img src="icons/bilibili.svg" alt="B站图标">B 站：492742189</a>
+    <a class="contact-chip" href="https://www.douyin.com/search/266483386" target="_blank">
+      <img src="icons/douyin.svg" alt="抖音图标">抖音：266483386</a>
   </div>
 </section>
 
@@ -342,10 +459,6 @@ Skill skills[] = {
   <h2 class="sec-title">联系我</h2>
   <p class="sec-sub">Contact</p>
   <div class="contact-list reveal">
-    <a class="contact-chip" href="https://space.bilibili.com/492742189" target="_blank">
-      <img src="icons/bilibili.svg" alt="B站图标">B 站：492742189</a>
-    <a class="contact-chip" href="https://www.douyin.com/search/266483386" target="_blank">
-      <img src="icons/douyin.svg" alt="抖音图标">抖音：266483386</a>
     <button class="contact-chip" onclick="copyText('917174272', this)">
       <img src="icons/qq.svg" alt="QQ图标">QQ：917174272</button>
     <button class="contact-chip" onclick="copyText('forevermoreshy', this)">
@@ -359,7 +472,10 @@ Skill skills[] = {
   </div>
 </section>
 
-<footer>© 2026 Shy · SHY.DEV · Deployed on GitHub Pages</footer>
+<footer>
+  © 2026 Shy · 孙浩阳　|　最后更新：2026.10.17　|　技术栈：HTML / CSS / 原生 JS　|　
+  <a href="https://github.com/ForShy6/shy-homepage" target="_blank">源码仓库</a>　|　Hosted on GitHub Pages
+</footer>
 
 <script>
   // ===== 打字机（精简文案）=====
