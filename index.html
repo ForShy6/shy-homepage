@@ -252,6 +252,30 @@
     border-top:1px solid var(--line);
   }
 
+  /* ===== 背景音乐开关：专辑封面唱片，播放时旋转 ===== */
+  #bgmBtn{
+    position:fixed; right:22px; bottom:22px; z-index:20;
+    width:62px; height:62px; border-radius:50%;
+    border:none; padding:0; cursor:pointer;
+    background:none; overflow:hidden;
+    box-shadow:0 6px 18px rgba(0,0,0,.22), 0 0 0 4px rgba(255,255,255,.75);
+    transition:transform .2s, box-shadow .2s;
+  }
+  #bgmBtn:hover{transform:scale(1.06)}
+  #bgmBtn img{
+    width:100%; height:100%; object-fit:cover; display:block;
+    animation:spin 8s linear infinite; animation-play-state:paused;
+  }
+  #bgmBtn.playing img{animation-play-state:running}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  #bgmBtn::after{
+    content:"♪"; position:absolute; inset:0;
+    display:flex; align-items:center; justify-content:center;
+    font-size:1.5rem; color:#fff; background:rgba(0,0,0,.35);
+    opacity:1; transition:opacity .25s;
+  }
+  #bgmBtn.playing::after{opacity:0}
+
   .reveal{opacity:0; transform:translateY(26px); transition:opacity .7s, transform .7s}
   .reveal.show{opacity:1; transform:none}
   /* 系统开启"减少动效"时关闭入场动画，照顾对动画敏感的访问者 */
@@ -264,6 +288,9 @@
 <body>
 
 <div class="bg-scene"><img src="bg-crop.jpg" alt=""><div class="bg-tint"></div></div>
+
+<audio id="bgm" src="music/bgm.mp3" loop preload="none"></audio>
+<button id="bgmBtn" title="播放/暂停背景音乐" aria-label="播放/暂停背景音乐"><img src="music/cover.jpg" alt=""></button>
 
 <nav>
   <div class="logo">SHY<b>.DEV</b></div>
@@ -283,10 +310,6 @@
   <h1>你好，我是 <span>Shy</span></h1>
   <p class="realname">孙浩阳 · 沈阳理工大学 计算机科学与技术</p>
   <p class="typing" id="typing"></p>
-  <div class="cta">
-    <a class="btn btn-primary" href="#projects">项目</a>
-    <a class="btn btn-ghost" href="#contact">联系</a>
-  </div>
 </header>
 
 <section id="about">
@@ -516,6 +539,19 @@ Skill skills[] = {
   }
   document.getElementById("guessBtn").onclick = guess;
   input.addEventListener("keydown", e=>{ if(e.key === "Enter") guess(); });
+
+  // ===== 背景音乐：点封面旋转播放，再点暂停 =====
+  const bgm = document.getElementById("bgm");
+  const bgmBtn = document.getElementById("bgmBtn");
+  bgmBtn.addEventListener("click", ()=>{
+    if(bgm.paused){
+      bgm.play();
+      bgmBtn.classList.add("playing");
+    }else{
+      bgm.pause();
+      bgmBtn.classList.remove("playing");
+    }
+  });
 
   // ===== 复制 =====
   function copyText(text, btn){
