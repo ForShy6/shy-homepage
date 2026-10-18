@@ -160,7 +160,7 @@
     background:var(--card); border:1px solid var(--line);
     border-radius:var(--r-card); padding:24px;
     box-shadow:var(--shadow-card);
-    transition:transform .25s, box-shadow .25s;
+    transition:transform .25s, box-shadow .25s, border-color .25s;
   }
   .card h3{color:var(--accent-text); margin-bottom:8px; font-size:1.05rem; line-height:1.45}
   .card p{color:var(--muted); font-size:.95rem; line-height:1.65}
@@ -206,12 +206,13 @@
     display:flex; align-items:center; gap:16px;
     background:var(--card); border:1px solid var(--line); border-radius:var(--r-card);
     padding:18px 20px; box-shadow:var(--shadow-card);
-    transition:transform .25s, box-shadow .25s;
+    transition:transform .25s, box-shadow .25s, border-color .25s;
   }
   /* 四款图标统一尺寸与含留白，视觉重量一致 */
   .fps-card img{
     width:64px; height:64px; border-radius:12px; object-fit:contain;
     background:#f7f5f1; padding:10px;
+    transition:transform .25s ease;
   }
   .fps-card .gname{font-size:1.05rem; line-height:1.45; font-weight:400}
   .fps-card .hours{font-size:.82rem; color:var(--accent-text); font-weight:600}
@@ -241,7 +242,7 @@
   .proj{
     background:var(--card); border:1px solid var(--line); border-radius:var(--r-card);
     padding:24px; box-shadow:var(--shadow-card);
-    transition:transform .25s, box-shadow .25s;
+    transition:transform .25s, box-shadow .25s, border-color .25s;
     display:flex; flex-direction:column;
   }
   /* 让卡片内嵌内容自动撑满，保证同一行卡片等高 */
@@ -349,7 +350,7 @@
     font-size:.92rem; cursor:pointer; font-family:inherit;
     box-shadow:var(--shadow-card);
   }
-  .contact-chip img, .contact-chip svg{width:22px; height:22px; flex:none}
+  .contact-chip img, .contact-chip svg{width:22px; height:22px; flex:none; transition:transform .25s ease}
   .contact-chip.copied{border-color:var(--accent2); color:var(--accent2)}
   .chip-text{white-space:nowrap}
 
@@ -390,8 +391,19 @@
      桌面：鼠标悬停才抬起，条件是设备真的有指针，避免触屏把 hover 粘住；
      触屏：没有 hover，靠 :active 让"按下去"这一下有反馈 */
   @media(hover:hover){
-    .card:hover, .fps-card:hover, .proj:hover, .contact-chip:hover{transform:translateY(-4px); box-shadow:var(--shadow-hover)}
-    .contact-chip:hover{border-color:var(--accent)}
+    .card:hover, .fps-card:hover, .proj:hover{
+      transform:translateY(-4px);
+      box-shadow:var(--shadow-hover);
+      border-color:rgba(59,130,160,.45);   /* 边框从米灰渐显成淡蓝，只亮一点 */
+    }
+    .contact-chip:hover{
+      transform:translateY(-4px);
+      box-shadow:var(--shadow-hover);
+      border-color:rgba(59,130,160,.65);
+    }
+    /* 图标跟着呼吸一下：只放大 7%，不改变布局 */
+    .fps-card:hover img{transform:scale(1.07)}
+    .contact-chip:hover img, .contact-chip:hover svg{transform:scale(1.08)}
     .zoom-btn:hover{border-color:var(--accent); background:rgba(59,130,160,.08)}
     #bgmBtn:hover{transform:scale(1.06)}
   }
@@ -405,7 +417,8 @@
     .reveal{opacity:1; transform:none; transition:none}
     html{scroll-behavior:auto}
     .card:active, .fps-card:active, .proj:active,
-    .contact-chip:active, .zoom-btn:active, .modal-close:active, .guess-input button:active{transform:none}
+    .contact-chip:active, .zoom-btn:active, .modal-close:active, .guess-input button:active,
+    .fps-card img, .contact-chip img, .contact-chip svg{transform:none; transition:none}
   }
 </style>
 <noscript><style>
