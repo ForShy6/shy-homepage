@@ -102,8 +102,8 @@
     nav ul::-webkit-scrollbar{display:none}
     nav a{font-size:.82rem; white-space:nowrap}
   }
-  /* 窄屏时右侧加一道渐隐，暗示"还能滑"，而不是一个字被硬切一半 */
-  @media(max-width:560px){
+  /* 6 项在 360px 以上已经排得下，只有更窄的机器才需要"还能滑"的渐隐提示 */
+  @media(max-width:350px){
     nav ul{
       max-width:66vw; gap:10px;
       -webkit-mask-image:linear-gradient(90deg,#000 0,#000 86%,transparent 100%);
