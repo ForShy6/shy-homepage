@@ -404,16 +404,18 @@
 
   /* ===== 联系我（3 列网格卡片，真实官方图标）===== */
   /* 7 个联系方式拆成 4 + 3 两行，每行都正好填满，不留半排空洞 */
-  /* 7 项排 4 列：第 5 项（微信）占两格，正好把第二行补满，两行的格子也就一样宽了 */
-  .contact-list{display:grid; gap:14px}
-  .contact-list--seven{grid-template-columns:repeat(4,minmax(0,1fr))}
-  .contact-list--seven > :nth-child(5){grid-column:span 2}
+  /* 上面 4 个、下面 3 个，两行各自等宽，没有哪一项跨两格 */
+  .contact-list{display:flex; flex-wrap:wrap; justify-content:center; gap:14px}
+  .contact-list > *{flex:0 0 calc((100% - 42px) / 4); min-width:0}
+  @media(min-width:901px){
+    /* 最后三个平分整行，所以是 4 等分 + 3 等分两段 */
+    .contact-list > :nth-child(n+5){flex:1 0 calc((100% - 42px) / 4)}
+  }
   @media(max-width:900px){
-    .contact-list--seven{grid-template-columns:repeat(2,minmax(0,1fr))}
+    .contact-list > *{flex:0 0 calc((100% - 14px) / 2)}
   }
   @media(max-width:640px){
-    .contact-list--seven{grid-template-columns:1fr}
-    .contact-list--seven > :nth-child(5){grid-column:auto}
+    .contact-list > *{flex:1 1 100%}
   }
   .contact-chip{
     display:flex; align-items:center; gap:12px; justify-content:center;
