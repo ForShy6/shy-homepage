@@ -195,7 +195,7 @@
   .ct{color:#3b82a0}      /* 类型 */
   .cs{color:#2f7d32}      /* 字符串 */
   .cc{color:#9a9484}      /* 注释 */
-  .cn{color:#b4560a}      /* 数字 */
+  .cn{color:#b4560a; display:inline-block; min-width:2ch}   /* 数字（定宽，计数时不抖） */
 
   /* ===== 游戏 ===== */
   .fps-grid{
@@ -246,7 +246,7 @@
     display:flex; flex-direction:column;
   }
   /* 让卡片内嵌内容自动撑满，保证同一行卡片等高 */
-  .proj .guess-box, .proj .schulte-frame, .proj .proj-video, .proj-thumb{margin-top:auto}
+  .proj .guess-box, .proj .proj-video{margin-top:auto}
   /* 标签组：用一层 flex 包起来，否则 flex 卡片会把每个小标签拉成整行宽条 */
   .proj .tags{display:flex; flex-wrap:wrap; gap:6px; margin-bottom:12px}
   .proj .tag{
@@ -255,15 +255,26 @@
   }
   .proj h3{margin-bottom:8px; font-size:1.05rem; line-height:1.45}
   .proj p{color:var(--muted); font-size:.95rem; line-height:1.65}
-  /* 520px：实测 5×5 方格内容约 500px 高，430 会把最后一行切掉 */
-  .schulte-frame{
-    width:100%; height:520px; border:none; border-radius:var(--r-inner); margin-top:14px;
-    background:#f5f3ef;
-  }
-  @media(max-width:760px){ .schulte-frame{height:480px} }
   .proj-thumb{
-    width:100%; height:auto; display:block; margin-top:14px;
+    width:100%; height:auto; display:block;
     border-radius:var(--r-inner); border:1px solid var(--line);
+  }
+  /* 预览图整块可点：手机上没有悬停提示，所以给一行明确的"点我"文字 */
+  .proj-shot{
+    position:relative; display:block; width:100%; margin-top:auto; padding:0;
+    border:none; background:none; cursor:zoom-in; font-family:inherit;
+    border-radius:var(--r-inner);
+  }
+  .proj-shot:hover .proj-thumb, .proj-shot:hover .schulte-preview{border-color:rgba(59,130,160,.55)}
+  .schulte-preview{
+    width:100%; height:auto; display:block;
+    border-radius:var(--r-inner); border:1px solid var(--line);
+    transition:border-color .25s;
+  }
+  .shot-hint{
+    position:absolute; right:8px; bottom:8px;
+    font-size:.7rem; color:#fff; background:rgba(38,34,28,.6);
+    padding:2px 10px; border-radius:var(--r-pill); white-space:nowrap;
   }
   .proj-video{
     width:100%; height:auto; margin-top:14px; border-radius:var(--r-inner); display:block;
@@ -306,6 +317,15 @@
     font-size:.82rem; padding:5px 14px; border-radius:var(--r-pill); cursor:pointer;
     display:inline-flex; align-items:center; gap:5px; transition:.2s; font-family:var(--font-display);
   }
+  /* ===== 大图灯箱 ===== */
+  .lightbox{
+    position:fixed; inset:0; z-index:70; display:none;
+    align-items:center; justify-content:center; padding:18px;
+    background:rgba(30,26,20,.92); cursor:zoom-out;
+  }
+  .lightbox.show{display:flex}
+  .lightbox img{max-width:100%; max-height:100%; border-radius:10px; display:block}
+
   .modal{
     position:fixed; inset:0; z-index:60; display:none;
     align-items:center; justify-content:center; padding:16px;
@@ -387,6 +407,30 @@
     #bgmBtn::after{font-size:1.25rem}
   }
 
+  /* ===== 右侧章节点（手机端导航补充）=====
+     只在 900px 以下出现：这一档顶部导航要横滑，靠它告诉用户"走到第几屏了" */
+  .section-dots{
+    position:fixed; left:auto; right:2px; top:50%; z-index:16;
+    display:none; flex-direction:column; gap:2px;
+    padding:6px 3px; border-radius:var(--r-pill);
+    background:rgba(247,245,241,.82); backdrop-filter:blur(6px);
+    border:1px solid var(--line);
+    transform:translateY(-50%) translateX(12px);
+    opacity:0; pointer-events:none;
+    transition:opacity .3s, transform .3s;
+  }
+  .section-dots.show{opacity:1; pointer-events:auto; transform:translateY(-50%)}
+  .section-dots a{
+    display:flex; align-items:center; justify-content:center;
+    width:14px; height:17px;   /* 视觉只有 4px 点，但可点区域给到 14×17 */
+  }
+  .section-dots a::before{
+    content:""; width:4px; height:4px; border-radius:2px;
+    background:#c9c2b3; transition:height .25s, background .25s;
+  }
+  .section-dots a.on::before{height:15px; background:var(--accent)}
+  @media(max-width:900px){ .section-dots{display:flex} }
+
   /* ===== 交互反馈 =====
      桌面：鼠标悬停才抬起，条件是设备真的有指针，避免触屏把 hover 粘住；
      触屏：没有 hover，靠 :active 让"按下去"这一下有反馈 */
@@ -410,7 +454,12 @@
   .card:active, .fps-card:active, .proj:active{transform:translateY(-1px) scale(.997)}
   .contact-chip:active, .zoom-btn:active, .modal-close:active, .guess-input button:active{transform:scale(.97)}
 
-  .reveal{opacity:0; transform:translateY(26px); transition:opacity .7s, transform .7s}
+  /* 同组卡片按 --i 依次入场，不再齐步走 */
+  .reveal{
+    opacity:0; transform:translateY(26px);
+    transition:opacity .7s cubic-bezier(.22,.7,.3,1), transform .7s cubic-bezier(.22,.7,.3,1);
+    transition-delay:calc(var(--i,0) * 70ms);
+  }
   .reveal.show{opacity:1; transform:none}
   /* 系统开启"减少动效"时关闭入场动画，照顾对动画敏感的访问者 */
   @media(prefers-reduced-motion:reduce){
@@ -447,6 +496,15 @@
   </ul>
   </div>
 </nav>
+
+<div class="section-dots" id="sectionDots" role="navigation" aria-label="章节导航">
+  <a href="#about"        data-sec="about"        aria-label="关于我"></a>
+  <a href="#skills"       data-sec="skills"       aria-label="技能"></a>
+  <a href="#timeline-sec" data-sec="timeline-sec" aria-label="经历"></a>
+  <a href="#projects"     data-sec="projects"     aria-label="项目"></a>
+  <a href="#games"        data-sec="games"        aria-label="游戏"></a>
+  <a href="#contact"      data-sec="contact"      aria-label="联系"></a>
+</div>
 
 <header>
   <div class="avatar"><img src="avatar.jpg" alt="Shy 的头像"></div>
@@ -497,9 +555,9 @@
 } Skill;
 
 Skill skills[] = {
-    {<span class="cs">"C"</span>,      <span class="cn">60</span>},  <span class="cc">// 课内主力</span>
-    {<span class="cs">"Python"</span>, <span class="cn">50</span>},  <span class="cc">// 自学中</span>
-    {<span class="cs">"Linux"</span>,  <span class="cn">10</span>},  <span class="cc">// 想了解，下一步目标</span>
+    {<span class="cs">"C"</span>,      <span class="cn" data-count="60">0</span>},  <span class="cc">// 课内主力</span>
+    {<span class="cs">"Python"</span>, <span class="cn" data-count="50">0</span>},  <span class="cc">// 自学中</span>
+    {<span class="cs">"Linux"</span>,  <span class="cn" data-count="10">0</span>},  <span class="cc">// 想了解，下一步目标</span>
 };</div>
   </div>
 </section>
@@ -560,17 +618,29 @@ Skill skills[] = {
         <button class="zoom-btn" onclick="openSchulte()">⤢ 放大</button>
       </div>
       <p>注意力训练小工具：按顺序点 1 到 N² 计时，支持 3×3 到 7×7，用 localStorage 记录最佳成绩。</p>
-      <iframe class="schulte-frame" src="schulte.html" title="舒尔特方格"></iframe>
+      <button class="proj-shot" type="button" onclick="openSchulte()" aria-label="放大查看舒尔特方格">
+        <img class="schulte-preview" src="schulte-preview.jpg" alt="舒尔特方格界面预览"
+             loading="lazy" width="760" height="640">
+      </button>
     </div>
     <div class="proj reveal">
       <div class="tags"><span class="tag">Web</span><span class="tag">响应式</span></div>
       <h3>这个主页</h3>
       <p>HTML/CSS/JS 从零搭建，部署在 GitHub Pages——就是你正在看的这个。猜数字与舒尔特方格都直接嵌在页面里可玩。</p>
-      <img class="proj-thumb" src="preview-this-page.jpg?v=2" alt="这个主页的首屏截图" loading="lazy" width="640" height="360">
+      <button class="proj-shot" type="button"
+              onclick="openLightbox('preview-this-page-large.jpg','这个主页的首屏')"
+              aria-label="放大查看这个主页的截图">
+        <img class="proj-thumb" src="preview-this-page.jpg?v=2" alt="这个主页的首屏截图"
+             loading="lazy" width="640" height="360">
+        <span class="shot-hint">点击看大图</span>
+      </button>
     </div>
     <div class="proj reveal">
       <div class="tags"><span class="tag">AI 视频</span><span class="tag">科普</span></div>
-      <h3>为什么年纪越大时间过得越快</h3>
+      <div class="proj-head">
+        <h3>为什么年纪越大时间过得越快</h3>
+        <button class="zoom-btn" onclick="fullVideo(this)">⤢ 全屏</button>
+      </div>
       <p>用 AI 生成的科普短片，从记忆与「第一次」的密度解释时间感的变化。</p>
       <video class="proj-video" src="video/ai-video.mp4" controls preload="none" playsinline
              poster="video/poster.jpg" width="1280" height="720"></video>
@@ -627,6 +697,10 @@ Skill skills[] = {
       <span class="chip-text">17391827651</span></a>
   </div>
 </section>
+
+<div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="查看大图">
+  <img id="lightboxImg" alt="">
+</div>
 
 <div class="modal" id="schulteModal" role="dialog" aria-modal="true" aria-label="舒尔特方格">
   <div class="modal-box">
@@ -777,6 +851,77 @@ Skill skills[] = {
     }else{
       finish(legacyCopy(text));
     }
+  }
+
+  // ===== 同组卡片错位入场：给每个 .reveal 标上它在组里的序号 =====
+  document.querySelectorAll(".reveal").forEach(el=>{
+    const sibs = [...el.parentElement.children].filter(c=>c.classList.contains("reveal"));
+    el.style.setProperty("--i", sibs.indexOf(el));
+  });
+
+  // ===== 右侧章节点：滚过首屏才出现，当前板块高亮 =====
+  const dots = document.getElementById("sectionDots");
+  const dotLinks = [...dots.querySelectorAll("a")];
+  const markActive = id => dotLinks.forEach(a=>a.classList.toggle("on", a.dataset.sec === id));
+  const secObs = new IntersectionObserver(es=>{
+    es.forEach(e=>{ if(e.isIntersecting) markActive(e.target.id); });
+  }, {rootMargin:"-45% 0px -45% 0px"});
+  dotLinks.forEach(a=>{
+    const sec = document.querySelector(a.getAttribute("href"));
+    if(sec) secObs.observe(sec);
+  });
+  addEventListener("scroll", ()=>{
+    dots.classList.toggle("show", scrollY > innerHeight * 0.55);
+  }, {passive:true});
+
+  // ===== 大图灯箱 =====
+  const lightbox = document.getElementById("lightbox");
+  const lightboxImg = document.getElementById("lightboxImg");
+  let lbBack = null;
+  function openLightbox(src, alt){
+    lightboxImg.src = src;
+    lightboxImg.alt = alt || "";
+    lbBack = document.activeElement;
+    lightbox.classList.add("show");
+    document.body.classList.add("modal-open");
+  }
+  function closeLightbox(){
+    lightbox.classList.remove("show");
+    document.body.classList.remove("modal-open");
+    if(lbBack) lbBack.focus();
+  }
+  lightbox.addEventListener("click", closeLightbox);
+  addEventListener("keydown", e=>{
+    if(e.key === "Escape" && lightbox.classList.contains("show")) closeLightbox();
+  });
+
+  // ===== 视频全屏（iOS 只有视频元素自己能进全屏）=====
+  function fullVideo(btn){
+    const v = btn.closest(".proj").querySelector("video");
+    if(!v) return;
+    if(v.requestFullscreen) v.requestFullscreen().catch(()=>{});
+    else if(v.webkitEnterFullscreen) v.webkitEnterFullscreen();
+    const p = v.play();
+    if(p && p.catch) p.catch(()=>{});
+  }
+
+  // ===== 技能数字滚动：滚到代码块才开始数 =====
+  const codeWin = document.querySelector(".code-window");
+  if(codeWin){
+    const nums = [...codeWin.querySelectorAll("[data-count]")];
+    const ease = t => 1 - Math.pow(1 - t, 3);
+    const runCount = () => {
+      const t0 = performance.now(), dur = 900;
+      (function step(now){
+        const p = Math.min(1, (now - t0) / dur);
+        nums.forEach(n=>{ n.textContent = Math.round(+n.dataset.count * ease(p)); });
+        if(p < 1) requestAnimationFrame(step);
+      })(t0);
+    };
+    const numObs = new IntersectionObserver((es, obs)=>{
+      es.forEach(e=>{ if(e.isIntersecting){ runCount(); obs.disconnect(); } });
+    }, {threshold:.35});
+    numObs.observe(codeWin);
   }
 </script>
 
