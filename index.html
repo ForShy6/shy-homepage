@@ -75,6 +75,8 @@
   .bg-scene{position:fixed; inset:0; z-index:-2; overflow:hidden}
   .bg-scene img{
     width:100%; height:100%; object-fit:cover; object-position:50% 32%;
+    /* 预先放大 8%，给视差留出位移余量（800px 高约 32px），上移时不会露底 */
+    transform:scale(1.08); will-change:transform;
   }
   /* 上层米色渐层：图片颜色与页面底色无缝衔接，同时保证文字可读 */
   /* 四段渐入：越往下越淡但不归零，让插画一直透到页尾，而不是中途凭空消失 */
@@ -104,6 +106,18 @@
   .sr-only{
     position:absolute; width:1px; height:1px; padding:0; margin:-1px;
     overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; border:0;
+  }
+
+  /* 顶部阅读进度：2px 细线，只改 scaleX，走合成器 */
+  .scroll-progress{
+    position:fixed; top:0; left:0; right:0; height:2px; z-index:30;
+    pointer-events:none;
+  }
+  .scroll-progress i{
+    display:block; height:100%; width:100%;
+    transform:scaleX(0); transform-origin:0 50%;
+    background:linear-gradient(90deg,var(--accent),var(--accent2));
+    will-change:transform;
   }
 
   /* ===== 导航 ===== */
@@ -536,6 +550,8 @@
 <body>
 
 <a class="skip" href="#main">跳到主要内容</a>
+
+<div class="scroll-progress" aria-hidden="true"><i id="progressBar"></i></div>
 
 <div class="bg-scene"><img src="bg-crop.webp" alt=""><div class="bg-tint"></div></div>
 
@@ -971,6 +987,28 @@ Skill skills[] = {
       finish(legacyCopy(text));
     }
   }
+
+  // ===== 顶部阅读进度 + 首屏视差 =====
+  // 两者都只写 transform，交给合成器处理，不触发重排/重绘
+  const progressBar = document.getElementById("progressBar");
+  const bgImg = document.querySelector(".bg-scene img");
+  let framePending = false;
+
+  function paintScrollEffects(){
+    framePending = false;
+    const docH = document.documentElement.scrollHeight - innerHeight;
+    progressBar.style.transform = "scaleX(" + (docH > 0 ? Math.min(1, scrollY / docH) : 0) + ")";
+    if(!reduceMotion){
+      // 视差只在首屏生效：最多上移 26px，再往下就固定住
+      const shift = Math.min(scrollY, innerHeight) * 0.12;
+      const clamped = Math.min(shift, 26);
+      bgImg.style.transform = "translate3d(0," + (-clamped).toFixed(1) + "px,0) scale(1.08)";
+    }
+  }
+  addEventListener("scroll", ()=>{
+    if(!framePending){ framePending = true; requestAnimationFrame(paintScrollEffects); }
+  }, {passive:true});
+  paintScrollEffects();
 
   // ===== 同组卡片错位入场：给每个 .reveal 标上它在组里的序号 =====
   document.querySelectorAll(".reveal").forEach(el=>{
