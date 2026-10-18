@@ -17,23 +17,37 @@
   font-weight:400; font-style:normal; font-display:swap;
 }
 *{margin:0;padding:0;box-sizing:border-box}
-body{background:#f5f3ef;color:#26221c;font-family:"LXGW WenKai",'Segoe UI',system-ui,sans-serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:16px;user-select:none}
+body{background:#f5f3ef;color:#26221c;font-family:"LXGW WenKai",'Segoe UI',system-ui,sans-serif;
+  min-height:100vh;min-height:100dvh;display:flex;flex-direction:column;align-items:center;
+  justify-content:center;padding:16px;user-select:none}
 h1{font-family:"Smiley Sans",sans-serif;font-size:1.4rem;margin-bottom:12px;letter-spacing:2px;color:#3b82a0}
-.info{display:flex;gap:16px;flex-wrap:wrap;justify-content:center;margin-bottom:12px;font-size:.9rem}
-.info span{background:#fff;border:1px solid #e3ded4;padding:6px 14px;border-radius:8px}
-.info b{font-family:"Smiley Sans",sans-serif;color:#e94560}
-.controls{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;justify-content:center}
-button,select{font-family:"Smiley Sans",sans-serif;background:#fff;color:#26221c;border:1px solid #e3ded4;padding:8px 16px;border-radius:8px;cursor:pointer;font-size:.9rem;transition:.2s}
+.info{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-bottom:12px;font-size:.9rem}
+.info span{background:#fff;border:1px solid #e3ded4;padding:5px 12px;border-radius:8px;white-space:nowrap}
+.info b{font-family:"Smiley Sans",sans-serif;color:#b03a3a}
+.controls{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;justify-content:center}
+button,select{font-family:"Smiley Sans",sans-serif;background:#fff;color:#26221c;border:1px solid #e3ded4;
+  padding:8px 16px;border-radius:8px;cursor:pointer;font-size:.95rem;transition:.2s}
 button:hover,select:hover{background:#3b82a0;color:#fff;border-color:#3b82a0}
-#grid{display:grid;gap:6px;width:min(90vw,480px);aspect-ratio:1}
-.cell{font-family:"Smiley Sans",sans-serif;background:#fff;border:1px solid #e3ded4;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:clamp(1rem,4vw,2rem);font-weight:700;cursor:pointer;transition:.15s}
+#grid{display:grid;gap:6px;width:min(90vw,480px,calc(100dvh - 250px));aspect-ratio:1}
+.cell{font-family:"Smiley Sans",sans-serif;background:#fff;border:1px solid #e3ded4;border-radius:8px;
+  display:flex;align-items:center;justify-content:center;font-size:clamp(1rem,4.2vw,2rem);
+  font-weight:700;cursor:pointer;transition:.15s}
 .cell:hover{background:#e9f0f2;border-color:#3b82a0}
 .cell:active{transform:scale(.94);background:#dcebee}
+.cell:focus-visible{outline:3px solid #3b82a0;outline-offset:1px}
 .cell.done{background:#3b82a0;color:#fff;pointer-events:none}
-.cell.err{animation:shake .3s;background:#e94560!important;color:#fff}
+.cell.err{animation:shake .3s;background:#b03a3a!important;color:#fff}
 @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
-#result{margin-top:16px;font-size:1.1rem;min-height:1.5em;text-align:center}
-#result b{font-family:"Smiley Sans",sans-serif;color:#3b82a0;font-size:1.3rem}
+#result{margin-top:16px;font-size:1.05rem;min-height:1.6em;text-align:center;color:#26221c}
+#result b{font-family:"Smiley Sans",sans-serif;color:#3b82a0;font-size:1.25rem}
+/* iOS 上小于 16px 的输入类控件聚焦会触发自动放大 */
+@media(max-width:640px){
+  button,select{font-size:16px}
+}
+@media(prefers-reduced-motion:reduce){
+  .cell.err{animation:none}
+  .cell,.cell:active{transform:none;transition:none}
+}
 </style>
 </head>
 <body>
@@ -44,7 +58,7 @@ button:hover,select:hover{background:#3b82a0;color:#fff;border-color:#3b82a0}
 <span>下一个：<b id="next">1</b></span>
 </div>
 <div class="controls">
-<select id="size">
+<select id="size" aria-label="选择方格大小">
 <option value="3">3×3</option>
 <option value="4">4×4</option>
 <option value="5" selected>5×5</option>
@@ -53,52 +67,105 @@ button:hover,select:hover{background:#3b82a0;color:#fff;border-color:#3b82a0}
 </select>
 <button id="restart">重新开始</button>
 </div>
-<div id="grid"></div>
-<div id="result"></div>
+<div id="grid" role="grid" aria-label="舒尔特方格，按顺序点击数字"></div>
+<div id="result" role="status" aria-live="polite"></div>
 <script>
-const $=id=>document.getElementById(id);
-let n=5,cur=1,start=0,timer=null,best={};
-const grid=$('grid'),timeEl=$('time'),bestEl=$('best'),nextEl=$('next'),result=$('result');
+const $ = id => document.getElementById(id);
+let n = 5, cur = 1, start = 0, rafId = null, running = false, pausedAt = 0, best = {};
+const grid = $('grid'), timeEl = $('time'), bestEl = $('best'), nextEl = $('next'), result = $('result');
 
-const load=()=>{try{best=JSON.parse(localStorage.getItem('schulte')||'{}')}catch(e){best={}}};
-const save=()=>localStorage.setItem('schulte',JSON.stringify(best));
-const shuffle=a=>{for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a};
+/* localStorage 在 Safari 无痕模式下会抛错，全部包一层 */
+const load = () => { try { best = JSON.parse(localStorage.getItem('schulte') || '{}') || {}; } catch(e){ best = {}; } };
+const save = () => { try { localStorage.setItem('schulte', JSON.stringify(best)); } catch(e){} };
+const shuffle = a => { for(let i=a.length-1;i>0;i--){ const j = Math.random()*(i+1)|0; [a[i],a[j]]=[a[j],a[i]]; } return a; };
 
-const init=()=>{
-  clearInterval(timer);timer=null;cur=1;start=0;
-  timeEl.textContent='0.00';nextEl.textContent='1';result.textContent='';
-  bestEl.textContent=best[n]?best[n].toFixed(2):'--';
-  grid.style.gridTemplateColumns=`repeat(${n},1fr)`;
-  const nums=shuffle([...Array(n*n)].map((_,i)=>i+1));
-  grid.innerHTML=nums.map(v=>`<div class="cell" data-v="${v}">${v}</div>`).join('');
+function halt(){
+  running = false;
+  if(rafId){ cancelAnimationFrame(rafId); rafId = null; }
+}
+function tickLoop(){
+  if(!running) return;
+  timeEl.textContent = ((Date.now() - start) / 1000).toFixed(2);
+  rafId = requestAnimationFrame(tickLoop);
+}
+function begin(){
+  start = Date.now();
+  running = true;
+  tickLoop();
+}
+
+const init = () => {
+  halt(); pausedAt = 0; cur = 1; start = 0;
+  timeEl.textContent = '0.00'; nextEl.textContent = '1'; result.textContent = '';
+  bestEl.textContent = best[n] ? best[n].toFixed(2) : '--';
+  grid.style.gridTemplateColumns = `repeat(${n},1fr)`;
+  const nums = shuffle([...Array(n*n)].map((_,i)=>i+1));
+  grid.innerHTML = nums.map(v =>
+    `<div class="cell" data-v="${v}" role="button" tabindex="0" aria-label="数字 ${v}">${v}</div>`
+  ).join('');
 };
 
-const tick=()=>{timeEl.textContent=((Date.now()-start)/1000).toFixed(2)};
+function pick(cell){
+  if(!cell || cell.classList.contains('done')) return;
+  const v = +cell.dataset.v;
+  if(v === cur){
+    if(cur === 1) begin();
+    cell.classList.add('done');
+    cur++;
+    if(cur > n*n){
+      halt();
+      const t = (Date.now() - start) / 1000;
+      timeEl.textContent = t.toFixed(2);
+      const isNew = !best[n] || t < best[n];
+      if(isNew){ best[n] = t; save(); bestEl.textContent = t.toFixed(2); }
+      result.innerHTML = `完成！用时 <b>${t.toFixed(2)}</b>s${isNew ? ' · 新纪录' : ''}`;
+      nextEl.textContent = '完成';
+    } else {
+      nextEl.textContent = cur;
+    }
+  } else {
+    cell.classList.add('err');
+    setTimeout(()=>cell.classList.remove('err'), 300);
+  }
+}
 
-grid.addEventListener('click',e=>{
-  const c=e.target.closest('.cell');if(!c||c.classList.contains('done'))return;
-  const v=+c.dataset.v;
-  if(v===cur){
-    if(cur===1){start=Date.now();timer=setInterval(tick,10)}
-    c.classList.add('done');cur++;
-    if(cur>n*n){
-      clearInterval(timer);
-      const t=(Date.now()-start)/1000;
-      timeEl.textContent=t.toFixed(2);
-      const nr=!best[n]||t<best[n];
-      if(nr){best[n]=t;save();bestEl.textContent=t.toFixed(2)}
-      result.innerHTML=`完成！用时 <b>${t.toFixed(2)}</b>s${nr?' 🏆新纪录！':''}`;
-    }else nextEl.textContent=cur;
-  }else{
-    c.classList.add('err');setTimeout(()=>c.classList.remove('err'),300);
+grid.addEventListener('click', e => pick(e.target.closest('.cell')));
+grid.addEventListener('keydown', e => {
+  if(e.key === 'Enter' || e.key === ' '){
+    const c = e.target.closest('.cell');
+    if(c){ e.preventDefault(); pick(c); }
   }
 });
 
-$('restart').onclick=init;
-$('size').onchange=e=>{n=+e.target.value;init()};
-document.addEventListener('keydown',e=>{if(e.code==='Space'){e.preventDefault();init()}});
+$('restart').onclick = init;
+$('size').onchange = e => { n = +e.target.value; init(); };
 
-load();init();
+document.addEventListener('keydown', e => {
+  /* 空格只在页面空白处重启，避免和格子的键盘操作打架 */
+  if(e.code === 'Space' && (e.target === document.body || e.target === grid)){
+    e.preventDefault(); init();
+  }
+  /* iframe 内的 Esc 自己处理，转给主页关弹窗 */
+  if(e.key === 'Escape' && window.parent !== window && window.parent.closeSchulte){
+    window.parent.closeSchulte();
+  }
+});
+
+/* 主页在关闭弹窗时调用：停表并记住暂停点，重开不会显示一整段"偷偷跑掉"的时间 */
+window.schultePause = () => {
+  if(!running) return;
+  halt();
+  pausedAt = Date.now();
+};
+window.schulteResume = () => {
+  if(!pausedAt) return;
+  start += Date.now() - pausedAt;
+  pausedAt = 0;
+  if(cur > 1 && cur <= n*n){ running = true; tickLoop(); }
+};
+
+load();
+init();
 </script>
 </body>
 </html>
