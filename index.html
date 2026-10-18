@@ -139,15 +139,6 @@
   .typing{color:var(--muted); font-size:1.02rem; margin-top:12px; min-height:1.7em}
   .typing::after{content:"▌"; color:var(--accent); animation:blink 1s infinite}
   @keyframes blink{50%{opacity:0}}
-  .cta{margin-top:22px; display:flex; gap:14px; flex-wrap:wrap; justify-content:center}
-  .btn{
-    padding:11px 28px; border-radius:999px; text-decoration:none; font-size:.95rem;
-    transition:transform .2s, box-shadow .2s; cursor:pointer; border:none;
-  }
-  .btn-primary{background:linear-gradient(90deg,var(--accent),var(--accent2)); color:#fff; font-weight:600}
-  .btn-primary:hover{transform:translateY(-4px); box-shadow:var(--shadow-hover)}
-  .btn-ghost{border:1px solid var(--line); color:var(--text); background:var(--card)}
-  .btn-ghost:hover{border-color:var(--accent); color:var(--accent)}
 
   /* ===== 通用 section ===== */
   /* --measure：窄块与卡片网格共用同一条右边界，全页右侧只有一条垂直基线 */
@@ -442,10 +433,6 @@
   <p class="realname">孙浩阳 · 沈阳理工大学 计算机科学与技术</p>
   <p class="tagline">在学 C 和 Python，喜欢把想法做成能跑、能玩的东西。</p>
   <p class="typing" id="typing" aria-hidden="true"></p>
-  <div class="cta">
-    <a class="btn btn-primary" href="#projects">看我的项目</a>
-    <a class="btn btn-ghost" href="#contact">联系我</a>
-  </div>
 </header>
 
 <section id="about">
