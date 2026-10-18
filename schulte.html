@@ -5,28 +5,34 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>舒尔特方格</title>
 <style>
+/* 与主页同一套分工：得意黑管标题与数字，霞鹜文楷管正文和界面文字 */
 @font-face{
   font-family:"Smiley Sans";
-  src:url("fonts/SmileySans-Oblique.woff2") format("woff2");
+  src:url("fonts/SmileySans-subset.woff2") format("woff2");
+  font-weight:400; font-style:normal; font-display:swap;
+}
+@font-face{
+  font-family:"LXGW WenKai";
+  src:url("fonts/WenKaiLite-subset.woff2") format("woff2");
   font-weight:400; font-style:normal; font-display:swap;
 }
 *{margin:0;padding:0;box-sizing:border-box}
-body{background:#f5f3ef;color:#26221c;font-family:"Smiley Sans",'Segoe UI',system-ui,sans-serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:16px;user-select:none}
-h1{font-size:1.4rem;margin-bottom:12px;letter-spacing:2px;color:#3b82a0}
+body{background:#f5f3ef;color:#26221c;font-family:"LXGW WenKai",'Segoe UI',system-ui,sans-serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:16px;user-select:none}
+h1{font-family:"Smiley Sans",sans-serif;font-size:1.4rem;margin-bottom:12px;letter-spacing:2px;color:#3b82a0}
 .info{display:flex;gap:16px;flex-wrap:wrap;justify-content:center;margin-bottom:12px;font-size:.9rem}
 .info span{background:#fff;border:1px solid #e3ded4;padding:6px 14px;border-radius:8px}
-.info b{color:#e94560}
+.info b{font-family:"Smiley Sans",sans-serif;color:#e94560}
 .controls{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;justify-content:center}
-button,select{background:#fff;color:#26221c;border:1px solid #e3ded4;padding:8px 16px;border-radius:8px;cursor:pointer;font-size:.9rem;transition:.2s}
+button,select{font-family:"Smiley Sans",sans-serif;background:#fff;color:#26221c;border:1px solid #e3ded4;padding:8px 16px;border-radius:8px;cursor:pointer;font-size:.9rem;transition:.2s}
 button:hover,select:hover{background:#3b82a0;color:#fff;border-color:#3b82a0}
 #grid{display:grid;gap:6px;width:min(90vw,480px);aspect-ratio:1}
-.cell{background:#fff;border:1px solid #e3ded4;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:clamp(1rem,4vw,2rem);font-weight:700;cursor:pointer;transition:.15s}
+.cell{font-family:"Smiley Sans",sans-serif;background:#fff;border:1px solid #e3ded4;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:clamp(1rem,4vw,2rem);font-weight:700;cursor:pointer;transition:.15s}
 .cell:hover{background:#e9f0f2;border-color:#3b82a0}
 .cell.done{background:#3b82a0;color:#fff;pointer-events:none}
 .cell.err{animation:shake .3s;background:#e94560!important;color:#fff}
 @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
 #result{margin-top:16px;font-size:1.1rem;min-height:1.5em;text-align:center}
-#result b{color:#3b82a0;font-size:1.3rem}
+#result b{font-family:"Smiley Sans",sans-serif;color:#3b82a0;font-size:1.3rem}
 </style>
 </head>
 <body>
