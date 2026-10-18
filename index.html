@@ -6,20 +6,29 @@
 <title>Shy — 个人主页</title>
 <meta name="description" content="Shy（孙浩阳）的个人主页：沈阳理工大学计算机科学与技术大一在读，分享我的小项目、游戏日常与联系方式。">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%233b82a0'/%3E%3Ctext x='16' y='22' font-size='16' font-family='Segoe UI' font-weight='700' fill='%23fff' text-anchor='middle'%3ES%3C/text%3E%3C/svg%3E">
-<link rel="preload" href="fonts/SmileySans-Oblique.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/SmileySans-subset.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/WenKaiLite-subset.woff2" as="font" type="font/woff2" crossorigin>
 <style>
-  /* 得意黑 Smiley Sans（官方 TTF 转 woff2，单字重，斜体风格） */
+  /* ===== 两套字体分工 =====
+     得意黑 Smiley Sans：显示体，只负责标题和所有加粗的强调文字
+     霞鹜文楷 LXGW WenKai Lite：正文与界面文字，长时间阅读更柔和
+     两个文件都已按「本页实际出现的字」做过子集，合计约 127KB */
   @font-face{
     font-family:"Smiley Sans";
-    src:url("fonts/SmileySans-Oblique.woff2") format("woff2");
-    font-weight:400;
-    font-style:normal;
-    font-display:swap;   /* 字体未加载完先用回退字体显示，不白屏 */
+    src:url("fonts/SmileySans-subset.woff2") format("woff2");
+    font-weight:400; font-style:normal; font-display:swap;
+  }
+  @font-face{
+    font-family:"LXGW WenKai";
+    src:url("fonts/WenKaiLite-subset.woff2") format("woff2");
+    font-weight:400; font-style:normal; font-display:swap;
   }
   :root{
+    --font-display:"Smiley Sans","PingFang SC","Microsoft YaHei","Segoe UI",sans-serif;
+    --font-text:"LXGW WenKai","PingFang SC","Microsoft YaHei","Segoe UI",sans-serif;
     /* 简约配色方案：暖米白底 + 纯白卡片 + 低饱和蓝紫点缀 */
     --bg:#f5f3ef; --bg-soft:#ece9e2; --card:#ffffff;
-    --text:#26221c; --muted:#7d776b; --line:#d8d0c2;
+    --text:#26221c; --muted:#6f6a5e; --line:#d8d0c2;
     --accent:#3b82a0; --accent2:#7c6aa9;
     /* 文字场景用的加深色，保证小字号也有 4.5:1 对比度 */
     --accent-text:#2f6b85;
@@ -36,11 +45,15 @@
   *{margin:0;padding:0;box-sizing:border-box}
   html{scroll-behavior:smooth}
   body{
-    font-family:"Smiley Sans","PingFang SC","Microsoft YaHei","Segoe UI",sans-serif;
-    background:var(--bg); color:var(--text); line-height:1.7;
+    font-family:var(--font-text);
+    background:var(--bg); color:var(--text); line-height:1.75;
   }
-  /* 标题、按钮等一律继承全局字体 */
-  h1,h2,h3,h4,button,input,.logo{font-family:inherit}
+  /* 凡是标题、按钮、以及所有靠加粗来强调的地方，都交给得意黑；
+     文楷只有 400 一个字重，用它会触发浏览器"假加粗"，笔画会糊 */
+  h1,h2,h3,h4,.logo,.btn,.sec-title,.card h3,.tl-title,.tl-date,.hours,
+  .route,.tag,.guess-input button,.zoom-btn,.modal-bar b,.fps-card h4,.proj h3{
+    font-family:var(--font-display);
+  }
   /* ===== 背景场景：全屏铺满 + 渐变融入底色，电脑/手机都不留色差 ===== */
   .bg-scene{position:fixed; inset:0; z-index:-2; overflow:hidden}
   .bg-scene img{
@@ -180,7 +193,7 @@
   .code-bar span{margin-left:8px}
   .code-body{
     background:#fdfcf9; padding:20px 22px;
-    font-family:"Smiley Sans",Consolas,"Courier New",monospace; font-size:.98rem; line-height:1.95;
+    font-family:var(--font-display),Consolas,"Courier New",monospace; font-size:.98rem; line-height:1.95;
     overflow-x:auto; white-space:pre;
   }
   .ck{color:#7c6aa9}      /* 关键字 */
@@ -285,7 +298,7 @@
   .guess-input button{
     background:linear-gradient(90deg,var(--accent),var(--accent2)); border:none;
     border-radius:8px; padding:8px 18px; font-weight:600; cursor:pointer; color:#fff;
-    font-family:inherit;
+    font-family:var(--font-display);
   }
 
   /* ===== 放大弹窗（解决手机端舒尔特方格滑动冲突）===== */
@@ -293,7 +306,7 @@
   .zoom-btn{
     background:none; border:1px solid var(--line); color:var(--accent-text);
     font-size:.82rem; padding:5px 14px; border-radius:var(--r-pill); cursor:pointer;
-    display:inline-flex; align-items:center; gap:5px; transition:.2s; font-family:inherit;
+    display:inline-flex; align-items:center; gap:5px; transition:.2s; font-family:var(--font-display);
   }
   .zoom-btn:hover{border-color:var(--accent); background:rgba(59,130,160,.08)}
   .modal{
