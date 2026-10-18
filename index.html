@@ -6,6 +6,23 @@
 <title>Shy — 个人主页</title>
 <meta name="description" content="Shy（孙浩阳）的个人主页：沈阳理工大学计算机科学与技术大一在读，分享我的小项目、游戏日常与联系方式。">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%233b82a0'/%3E%3Ctext x='16' y='22' font-size='16' font-family='Segoe UI' font-weight='700' fill='%23fff' text-anchor='middle'%3ES%3C/text%3E%3C/svg%3E">
+<link rel="canonical" href="https://forshy6.github.io/shy-homepage/">
+<meta name="theme-color" content="#f5f3ef">
+<meta name="author" content="Shy（孙浩阳）">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Shy.DEV">
+<meta property="og:title" content="Shy（孙浩阳）· 沈阳理工大学 计算机科学与技术">
+<meta property="og:description" content="在学 C 和 Python，喜欢把想法做成能跑、能玩的东西。这里有我的小项目、游戏日常和联系方式。">
+<meta property="og:url" content="https://forshy6.github.io/shy-homepage/">
+<meta property="og:image" content="https://forshy6.github.io/shy-homepage/og-cover.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:locale" content="zh_CN">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Shy（孙浩阳）· 沈阳理工大学 计算机科学与技术">
+<meta name="twitter:description" content="在学 C 和 Python，喜欢把想法做成能跑、能玩的东西。">
+<meta name="twitter:image" content="https://forshy6.github.io/shy-homepage/og-cover.jpg">
 <link rel="preload" href="fonts/SmileySans-subset.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="fonts/WenKaiLite-subset.woff2" as="font" type="font/woff2" crossorigin>
 <style>
@@ -43,7 +60,7 @@
     outline:2px solid var(--accent); outline-offset:3px;
   }
   *{margin:0;padding:0;box-sizing:border-box}
-  html{scroll-behavior:smooth}
+  html{scroll-behavior:smooth; scroll-padding-top:76px}
   body{
     font-family:var(--font-text);
     background:var(--bg); color:var(--text); line-height:1.75;
@@ -64,16 +81,29 @@
   .bg-tint{
     position:absolute; inset:0;
     background:
-      linear-gradient(180deg, rgba(245,243,239,.40) 0%, rgba(245,243,239,.62) 28%, rgba(245,243,239,.80) 62%, rgba(245,243,239,.88) 100%),
+      linear-gradient(180deg, rgba(245,243,239,.58) 0%, rgba(245,243,239,.66) 28%, rgba(245,243,239,.80) 62%, rgba(245,243,239,.88) 100%),
       linear-gradient(90deg, rgba(245,243,239,.66) 0%, rgba(245,243,239,.22) 50%, rgba(245,243,239,.66) 100%);
   }
   @media(max-width:760px){
     .bg-scene img{object-position:50% 25%}
     .bg-tint{
       background:
-        linear-gradient(180deg, rgba(245,243,239,.52) 0%, rgba(245,243,239,.70) 30%, rgba(245,243,239,.84) 65%, rgba(245,243,239,.90) 100%),
+        linear-gradient(180deg, rgba(245,243,239,.64) 0%, rgba(245,243,239,.74) 30%, rgba(245,243,239,.84) 65%, rgba(245,243,239,.90) 100%),
         linear-gradient(90deg, rgba(245,243,239,.58) 0%, rgba(245,243,239,.30) 50%, rgba(245,243,239,.58) 100%);
     }
+  }
+
+  /* 键盘用户第一下 Tab 就能跳过导航直达正文 */
+  .skip{
+    position:absolute; left:-9999px; top:0; z-index:120;
+    background:var(--accent); color:#fff; padding:10px 18px;
+    border-radius:0 0 10px 0; text-decoration:none; font-size:.9rem;
+  }
+  .skip:focus{left:0}
+  /* 只给读屏看的文字 */
+  .sr-only{
+    position:absolute; width:1px; height:1px; padding:0; margin:-1px;
+    overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; border:0;
   }
 
   /* ===== 导航 ===== */
@@ -86,21 +116,22 @@
   }
   /* 与正文共用 1000px 中轴，解决宽屏上 logo 与内容左边缘不对齐 */
   .nav-inner{
-    width:100%; max-width:1000px; margin:0 auto;
+    /* 与 section 的 6vw 内边距对齐：1000 - 2×6vw，宽屏下 logo 和正文才会在同一条竖线上 */
+    width:100%; max-width:calc(1000px - 12vw); margin:0 auto;
     display:flex; justify-content:space-between; align-items:center;
   }
   .logo{font-weight:700; font-size:1.1rem; letter-spacing:1px; color:var(--text)}
-  .logo b{color:var(--accent)}
+  .logo b{color:var(--accent-text)}
   nav ul{display:flex; gap:26px; list-style:none}
   nav a{color:var(--muted); text-decoration:none; font-size:.92rem; transition:color .2s}
   nav a:hover{color:var(--accent-text)}
   /* 平板及以下：菜单改为横向滚动，避免挤成两行 */
   @media(max-width:900px){
-    .nav-inner{gap:12px}
-    .logo{font-size:1rem}
-    nav ul{gap:16px; overflow-x:auto; -webkit-overflow-scrolling:touch; max-width:64vw}
+    .nav-inner{gap:10px}
+    .logo{font-size:.95rem}
+    nav ul{gap:8px; overflow-x:auto; -webkit-overflow-scrolling:touch}
     nav ul::-webkit-scrollbar{display:none}
-    nav a{font-size:.82rem; white-space:nowrap}
+    nav a{font-size:.8rem; white-space:nowrap}
   }
   /* 6 项在 360px 以上已经排得下，只有更窄的机器才需要"还能滑"的渐隐提示 */
   @media(max-width:350px){
@@ -142,7 +173,7 @@
 
   /* ===== 通用 section ===== */
   /* --measure：窄块与卡片网格共用同一条右边界，全页右侧只有一条垂直基线 */
-  section{max-width:1000px; margin:0 auto; padding:80px 6vw; --measure:100%}
+  section{max-width:1000px; margin:0 auto; padding:56px 6vw; --measure:100%}
   .sec-title{font-size:1.75rem; margin-bottom:6px; line-height:1.3}
   .sec-sub{color:var(--muted); margin-bottom:40px; font-size:.92rem}
   /* 前缀用紫色而不是蓝色：紫=结构标记，蓝=信息强调，让强调色有明确分工 */
@@ -192,9 +223,9 @@
     overflow-x:auto; white-space:pre;
   }
   .ck{color:#7c6aa9}      /* 关键字 */
-  .ct{color:#3b82a0}      /* 类型 */
+  .ct{color:var(--accent-text)}   /* 类型（原 #3b82a0 只有 4.19:1） */
   .cs{color:#2f7d32}      /* 字符串 */
-  .cc{color:#9a9484}      /* 注释 */
+  .cc{color:#6f6a5e}      /* 注释（原 #9a9484 只有 2.95:1） */
   .cn{color:#b4560a; display:inline-block; min-width:2ch}   /* 数字（定宽，计数时不抖） */
 
   /* ===== 游戏 ===== */
@@ -250,10 +281,18 @@
   /* 标签组：用一层 flex 包起来，否则 flex 卡片会把每个小标签拉成整行宽条 */
   .proj .tags{display:flex; flex-wrap:wrap; gap:6px; margin-bottom:12px}
   .proj .tag{
-    display:inline-block; font-size:.72rem; padding:3px 12px; border-radius:var(--r-pill);
+    display:inline-block; font-size:.78rem; padding:3px 12px; border-radius:var(--r-pill);
     background:rgba(59,130,160,.1); color:var(--accent-text); margin:0;
   }
   .proj h3{margin-bottom:8px; font-size:1.05rem; line-height:1.45}
+  /* 每个项目给「在线玩 / 源码」的出口，别只给一段描述 */
+  .proj-links{display:flex; flex-wrap:wrap; gap:8px; margin-top:12px}
+  .proj-links a{
+    font-size:.8rem; color:var(--accent-text); text-decoration:none;
+    border:1px solid var(--line); border-radius:var(--r-pill); padding:4px 12px;
+    transition:border-color .2s, background .2s, color .2s;
+  }
+  .proj-links a:hover{border-color:var(--accent); background:rgba(59,130,160,.08)}
   .proj p{color:var(--muted); font-size:.95rem; line-height:1.65}
   .proj-thumb{
     width:100%; height:auto; display:block;
@@ -296,10 +335,11 @@
   .guess-log .hint{color:var(--accent-text)}
   .guess-input{display:flex; gap:8px; margin-top:10px}
   .guess-input input{
-    flex:1; background:#fff; border:1px solid var(--line);
+    flex:1; min-width:0; background:#fff; border:1px solid var(--line);
     border-radius:8px; padding:8px 12px; color:var(--text);
-    font-size:.95rem; outline:none; font-family:inherit;
+    font-size:1rem; outline:none; font-family:inherit;
   }
+  @media(max-width:640px){ .guess-input input{font-size:16px} }
   .guess-input input:focus{
     border-color:var(--accent); box-shadow:0 0 0 3px rgba(59,130,160,.15);
     outline:none;
@@ -325,6 +365,12 @@
   }
   .lightbox.show{display:flex}
   .lightbox img{max-width:100%; max-height:100%; border-radius:10px; display:block}
+  .lightbox .lb-close{
+    position:absolute; top:14px; right:14px; width:42px; height:42px;
+    border-radius:50%; border:none; background:rgba(255,255,255,.92); color:#26221c;
+    font-size:1.15rem; line-height:1; cursor:pointer;
+  }
+  .lightbox .lb-close:focus-visible{outline:2px solid #fff; outline-offset:3px}
 
   .modal{
     position:fixed; inset:0; z-index:60; display:none;
@@ -348,19 +394,26 @@
   }
   .modal-close:hover{color:var(--text)}
   .modal-box iframe{width:100%; height:min(72vh,560px); border:none; display:block}
+  /* 小屏直接铺满：弹窗里塞的是 5×5 方格，矮屏会裁掉最后一排 */
+  @media(max-width:560px), (max-height:680px){
+    .modal{padding:0}
+    .modal-box{width:100%; height:100%; max-height:none; border-radius:0}
+    .modal-box iframe{height:calc(100% - 49px)}
+  }
   body.modal-open{overflow:hidden}
 
   /* ===== 联系我（3 列网格卡片，真实官方图标）===== */
   /* 7 个联系方式拆成 4 + 3 两行，每行都正好填满，不留半排空洞 */
+  /* 7 项排 4 列：第 5 项（微信）占两格，正好把第二行补满，两行的格子也就一样宽了 */
   .contact-list{display:grid; gap:14px}
-  .contact-list--four{grid-template-columns:repeat(4,1fr)}
-  .contact-list--three{grid-template-columns:repeat(3,1fr); margin-top:14px}
+  .contact-list--seven{grid-template-columns:repeat(4,minmax(0,1fr))}
+  .contact-list--seven > :nth-child(5){grid-column:span 2}
   @media(max-width:900px){
-    .contact-list--four{grid-template-columns:repeat(2,1fr)}
-    .contact-list--three{grid-template-columns:1fr; margin-top:14px}
+    .contact-list--seven{grid-template-columns:repeat(2,minmax(0,1fr))}
   }
   @media(max-width:640px){
-    .contact-list--four, .contact-list--three{grid-template-columns:1fr}
+    .contact-list--seven{grid-template-columns:1fr}
+    .contact-list--seven > :nth-child(5){grid-column:auto}
   }
   .contact-chip{
     display:flex; align-items:center; gap:12px; justify-content:center;
@@ -372,12 +425,14 @@
   }
   .contact-chip img, .contact-chip svg{width:22px; height:22px; flex:none; transition:transform .25s ease}
   .contact-chip.copied{border-color:var(--accent2); color:var(--accent2)}
-  .chip-text{white-space:nowrap}
+  .chip-text{white-space:nowrap; min-width:0}
 
   footer{
     text-align:center; color:var(--muted); padding:36px 0; font-size:.85rem;
     border-top:1px solid var(--line);
   }
+  footer a{color:var(--accent-text); text-decoration:none}
+  footer a:hover{text-decoration:underline}
 
   /* ===== 背景音乐开关：专辑封面唱片，播放时旋转 ===== */
   #bgmBtn{
@@ -416,13 +471,13 @@
     background:rgba(247,245,241,.82); backdrop-filter:blur(6px);
     border:1px solid var(--line);
     transform:translateY(-50%) translateX(12px);
-    opacity:0; pointer-events:none;
-    transition:opacity .3s, transform .3s;
+    opacity:0; visibility:hidden; pointer-events:none;
+    transition:opacity .3s, transform .3s, visibility .3s;
   }
-  .section-dots.show{opacity:1; pointer-events:auto; transform:translateY(-50%)}
+  .section-dots.show{opacity:1; visibility:visible; pointer-events:auto; transform:translateY(-50%)}
   .section-dots a{
     display:flex; align-items:center; justify-content:center;
-    width:14px; height:17px;   /* 视觉只有 4px 点，但可点区域给到 14×17 */
+    width:24px; height:24px;   /* 视觉只有 4px 点，但可点区域按 WCAG 2.2 给到 24×24 */
   }
   .section-dots a::before{
     content:""; width:4px; height:4px; border-radius:2px;
@@ -478,7 +533,9 @@
 </head>
 <body>
 
-<div class="bg-scene"><img src="bg-crop.jpg" alt=""><div class="bg-tint"></div></div>
+<a class="skip" href="#main">跳到主要内容</a>
+
+<div class="bg-scene"><img src="bg-crop.webp" alt=""><div class="bg-tint"></div></div>
 
 <audio id="bgm" src="music/bgm.mp3" loop preload="none"></audio>
 <button id="bgmBtn" title="播放/暂停背景音乐" aria-label="播放/暂停背景音乐"><img src="music/cover.jpg" alt=""></button>
@@ -513,6 +570,8 @@
   <p class="tagline">在学 C 和 Python，喜欢把想法做成能跑、能玩的东西。</p>
   <p class="typing" id="typing" aria-hidden="true"></p>
 </header>
+
+<main id="main">
 
 <section id="about">
   <h2 class="sec-title">关于我</h2>
@@ -555,9 +614,9 @@
 } Skill;
 
 Skill skills[] = {
-    {<span class="cs">"C"</span>,      <span class="cn" data-count="60">0</span>},  <span class="cc">// 课内主力</span>
-    {<span class="cs">"Python"</span>, <span class="cn" data-count="50">0</span>},  <span class="cc">// 自学中</span>
-    {<span class="cs">"Linux"</span>,  <span class="cn" data-count="10">0</span>},  <span class="cc">// 想了解，下一步目标</span>
+    {<span class="cs">"C"</span>,      <span class="cn" data-count="60">60</span>},  <span class="cc">// 课内主力</span>
+    {<span class="cs">"Python"</span>, <span class="cn" data-count="50">50</span>},  <span class="cc">// 自学中</span>
+    {<span class="cs">"Linux"</span>,  <span class="cn" data-count="10">10</span>},  <span class="cc">// 想了解，下一步目标</span>
 };</div>
   </div>
 </section>
@@ -610,6 +669,10 @@ Skill skills[] = {
           <button id="guessBtn">猜！</button>
         </div>
       </div>
+      <div class="proj-links">
+        <a href="https://forshy6.github.io/game1/" target="_blank" rel="noopener">在线玩</a>
+        <a href="https://github.com/ForShy6/game1/blob/main/guess_number.py" target="_blank" rel="noopener">Python 源码</a>
+      </div>
     </div>
     <div class="proj reveal">
       <div class="tags"><span class="tag">HTML/CSS/JS</span><span class="tag">注意力训练</span></div>
@@ -622,6 +685,10 @@ Skill skills[] = {
         <img class="schulte-preview" src="schulte-preview.jpg" alt="舒尔特方格界面预览"
              loading="lazy" width="760" height="640">
       </button>
+      <div class="proj-links">
+        <a href="schulte.html" target="_blank" rel="noopener">单独打开</a>
+        <a href="https://github.com/ForShy6/shy-homepage/blob/main/schulte.html" target="_blank" rel="noopener">源码</a>
+      </div>
     </div>
     <div class="proj reveal">
       <div class="tags"><span class="tag">Web</span><span class="tag">响应式</span></div>
@@ -634,6 +701,9 @@ Skill skills[] = {
              loading="lazy" width="640" height="360">
         <span class="shot-hint">点击看大图</span>
       </button>
+      <div class="proj-links">
+        <a href="https://github.com/ForShy6/shy-homepage" target="_blank" rel="noopener">源码仓库</a>
+      </div>
     </div>
     <div class="proj reveal">
       <div class="tags"><span class="tag">AI 视频</span><span class="tag">科普</span></div>
@@ -641,7 +711,7 @@ Skill skills[] = {
         <h3>为什么年纪越大时间过得越快</h3>
         <button class="zoom-btn" onclick="fullVideo(this)">⤢ 全屏</button>
       </div>
-      <p>用 AI 生成的科普短片，从记忆与「第一次」的密度解释时间感的变化。</p>
+      <p>用 AI 生成的科普短片，1 分 47 秒，无旁白，靠画面与字幕推进——从记忆与「第一次」的密度解释时间感的变化。</p>
       <video class="proj-video" src="video/ai-video.mp4" controls preload="none" playsinline
              poster="video/poster.jpg" width="1280" height="720"></video>
     </div>
@@ -674,8 +744,8 @@ Skill skills[] = {
 
 <section id="contact">
   <h2 class="sec-title">找到我</h2>
-  <p class="sec-sub">Contact · 点一下就能复制</p>
-  <div class="contact-list contact-list--four reveal">
+  <p class="sec-sub">Contact · QQ / 微信点一下复制，其余直达</p>
+  <div class="contact-list contact-list--seven reveal">
     <a class="contact-chip" href="https://github.com/ForShy6" target="_blank" rel="noopener">
       <img src="icons/github.svg" alt="GitHub 图标"><span class="chip-text">GitHub：ForShy6</span></a>
     <a class="contact-chip" href="https://space.bilibili.com/492742189" target="_blank" rel="noopener">
@@ -685,8 +755,6 @@ Skill skills[] = {
       <img src="icons/douyin.svg" alt="抖音图标"><span class="chip-text">抖音：266483386</span></a>
     <button class="contact-chip" onclick="copyText('917174272', this)" title="点击复制 QQ 号">
       <img src="icons/qq.svg" alt="QQ 图标"><span class="chip-text">QQ：917174272</span></button>
-  </div>
-  <div class="contact-list contact-list--three reveal">
     <button class="contact-chip" onclick="copyText('forevermoreshy', this)" title="点击复制微信号">
       <img src="icons/wechat.svg" alt="微信图标"><span class="chip-text">微信：forevermoreshy</span></button>
     <a class="contact-chip" href="mailto:917174272@qq.com">
@@ -698,9 +766,14 @@ Skill skills[] = {
   </div>
 </section>
 
+</main>
+
 <div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="查看大图">
+  <button class="lb-close" id="lbClose" aria-label="关闭大图">✕</button>
   <img id="lightboxImg" alt="">
 </div>
+
+<span class="sr-only" id="copyLive" role="status" aria-live="polite"></span>
 
 <div class="modal" id="schulteModal" role="dialog" aria-modal="true" aria-label="舒尔特方格">
   <div class="modal-box">
@@ -718,11 +791,14 @@ Skill skills[] = {
 </footer>
 
 <script>
+  const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
   // ===== 打字机（精简文案）=====
   const lines = ["计科大一 · 沈阳理工","西安 → 沈阳 · 1500km","C / Python / Linux","FPS 老玩家"];
   const el = document.getElementById("typing");
   let li=0, ci=0, deleting=false;
   (function tick(){
+    if(reduceMotion){ el.textContent = lines[0]; return; }   // 减少动效时直接显示第一句
     const line = lines[li];
     el.textContent = line.slice(0, ci);
     if(!deleting){
@@ -755,10 +831,19 @@ Skill skills[] = {
   }
   function guess(){
     const raw = input.value.trim();
+    // Number() 才能识别 1e2 / 50.5 这类写法，parseInt 会把它们截成 1 和 50
+    const g = Number(raw);
+    if(raw === "" || !Number.isInteger(g)){
+      addLog("输入无效：请输入一个整数哦，本次不计入猜测次数。");
+      input.select();
+      return;
+    }
+    if(g < 1 || g > 100){
+      addLog("超出范围：数字需要在 1 到 100 之间，本次不计入猜测次数。");
+      input.select();
+      return;
+    }
     input.value = "";
-    const g = parseInt(raw, 10);
-    if(isNaN(g)){ addLog("输入无效：请输入一个整数哦，本次不计入猜测次数。"); return; }
-    if(g < 1 || g > 100){ addLog("超出范围：数字需要在 1 到 100 之间，本次不计入猜测次数。"); return; }
     guessCount++;
     if(g > answer) addLog("大了，再往小猜一猜！", "hint");
     else if(g < answer) addLog("小了，再往大猜一猜！", "hint");
@@ -776,7 +861,11 @@ Skill skills[] = {
   const schulteModal = document.getElementById("schulteModal");
   const schulteFrame = schulteModal.querySelector("iframe");
   let lastFocus = null;
-  function openSchulte(){
+  const pageParts = () => document.querySelectorAll("nav, main, footer, #bgmBtn, .section-dots");
+  function setBehind(inert){
+    pageParts().forEach(n=>{ n.inert = inert; });
+  }
+  window.openSchulte = function(){
     // 首次打开才真正加载，避免页面一进来就拉两份舒尔特方格
     if(!schulteFrame.getAttribute("src")){
       schulteFrame.setAttribute("src", schulteFrame.dataset.src);
@@ -784,37 +873,68 @@ Skill skills[] = {
     lastFocus = document.activeElement;
     schulteModal.classList.add("show");
     document.body.classList.add("modal-open");
+    setBehind(true);
     schulteModal.querySelector(".modal-close").focus();
-  }
-  function closeSchulte(){
+    try { schulteFrame.contentWindow.schulteResume(); } catch(e){}
+  };
+  window.closeSchulte = function(){
+    if(!schulteModal.classList.contains("show")) return;   // 没开着就别抢焦点
+    try { schulteFrame.contentWindow.schultePause(); } catch(e){}
     schulteModal.classList.remove("show");
     document.body.classList.remove("modal-open");
+    setBehind(false);
     if(lastFocus) lastFocus.focus();
-  }
+  };
   schulteModal.addEventListener("click", e=>{ if(e.target === schulteModal) closeSchulte(); });
-  document.addEventListener("keydown", e=>{ if(e.key === "Escape") closeSchulte(); });
+  document.addEventListener("keydown", e=>{
+    if(e.key !== "Escape") return;
+    if(schulteModal.classList.contains("show")) closeSchulte();
+    else if(lightbox.classList.contains("show")) closeLightbox();
+  });
 
   // ===== 背景音乐：点封面旋转播放，再点暂停 =====
   const bgm = document.getElementById("bgm");
   const bgmBtn = document.getElementById("bgmBtn");
   bgmBtn.setAttribute("aria-pressed","false");
+  bgm.volume = 0.55;          // 打开就响，别用满音量吓人
+  let userPaused = false;     // 用户手动暂停过，就别再"自动帮他开"
+
+  function markPlaying(){
+    bgmBtn.classList.add("playing");
+    bgmBtn.setAttribute("aria-pressed","true");
+    bgmBtn.title = "暂停背景音乐";
+  }
+  function markPaused(){
+    bgmBtn.classList.remove("playing");
+    bgmBtn.setAttribute("aria-pressed","false");
+    bgmBtn.title = "播放背景音乐";
+  }
+  function tryPlay(){
+    const p = bgm.play();
+    if(p && p.then) return p.then(()=>{ markPlaying(); return true; }).catch(()=>{ markPaused(); return false; });
+    markPlaying(); return Promise.resolve(true);
+  }
+
+  // 1) 一进页面先试一次：Chrome/Edge 允许了就自动响
+  tryPlay();
+  // 2) 被浏览器拦下时，用户第一次动屏幕（点、摸、滚、按键）就把音乐接上
+  const unlockEvents = ["pointerdown","touchstart","keydown","wheel","scroll"];
+  function unlock(e){
+    if(userPaused || !bgm.paused) return;
+    tryPlay().then(ok=>{
+      if(ok) unlockEvents.forEach(t=>window.removeEventListener(t, unlock, true));
+    });
+  }
+  unlockEvents.forEach(t=>window.addEventListener(t, unlock, {passive:true, capture:true}));
+
   bgmBtn.addEventListener("click", ()=>{
     if(bgm.paused){
-      // play() 返回 Promise：被浏览器拦下时要撤销“正在播放”的外观，否则静音转圈
-      bgm.play().then(()=>{
-        bgmBtn.classList.add("playing");
-        bgmBtn.setAttribute("aria-pressed","true");
-        bgmBtn.title = "暂停背景音乐";
-      }).catch(()=>{
-        bgmBtn.classList.remove("playing");
-        bgmBtn.setAttribute("aria-pressed","false");
-        bgmBtn.title = "浏览器拦住了自动播放，再点一次试试";
-      });
+      userPaused = false;
+      tryPlay();
     }else{
       bgm.pause();
-      bgmBtn.classList.remove("playing");
-      bgmBtn.setAttribute("aria-pressed","false");
-      bgmBtn.title = "播放背景音乐";
+      userPaused = true;
+      markPaused();
     }
   });
 
@@ -837,6 +957,8 @@ Skill skills[] = {
     const old = label.textContent;   // 只备份文字，图标节点不能被牵连
     const finish = ok => {
       label.textContent = ok ? "已复制 ✓" : "复制失败，请长按选中";
+      const live = document.getElementById("copyLive");
+      if(live) live.textContent = ok ? "已复制到剪贴板" : "复制失败，请长按选中文字";
       btn.classList.toggle("copied", ok);
       clearTimeout(btn._copyTimer);
       btn._copyTimer = setTimeout(()=>{
@@ -878,18 +1000,22 @@ Skill skills[] = {
   const lightbox = document.getElementById("lightbox");
   const lightboxImg = document.getElementById("lightboxImg");
   let lbBack = null;
+  const lbClose = document.getElementById("lbClose");
   function openLightbox(src, alt){
     lightboxImg.src = src;
     lightboxImg.alt = alt || "";
     lbBack = document.activeElement;
     lightbox.classList.add("show");
     document.body.classList.add("modal-open");
+    lbClose.focus();
   }
   function closeLightbox(){
+    if(!lightbox.classList.contains("show")) return;
     lightbox.classList.remove("show");
     document.body.classList.remove("modal-open");
     if(lbBack) lbBack.focus();
   }
+  lbClose.addEventListener("click", e=>{ e.stopPropagation(); closeLightbox(); });
   lightbox.addEventListener("click", closeLightbox);
   addEventListener("keydown", e=>{
     if(e.key === "Escape" && lightbox.classList.contains("show")) closeLightbox();
@@ -911,6 +1037,8 @@ Skill skills[] = {
     const nums = [...codeWin.querySelectorAll("[data-count]")];
     const ease = t => 1 - Math.pow(1 - t, 3);
     const runCount = () => {
+      if(reduceMotion) return;   // 减少动效：HTML 里的 60/50/10 已经是最终值
+      nums.forEach(n=>{ n.textContent = "0"; });
       const t0 = performance.now(), dur = 900;
       (function step(now){
         const p = Math.min(1, (now - t0) / dur);
